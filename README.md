@@ -18,8 +18,8 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/yourproject.git
-    cd yourproject
+    git clone https://github.com/rmahbub01/blooddonor.git
+    cd blooddonor
     ```
 
 2. Create and activate a virtual environment:
