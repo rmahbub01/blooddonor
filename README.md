@@ -45,7 +45,7 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 1. Run the FastAPI server:
 
     ```bash
-    uvicorn app.main:app --reload
+    uvicorn main:app --reload
     ```
 
 2. Open your browser and visit:
