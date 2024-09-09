@@ -20,6 +20,7 @@ from blooddonor.crud.crud_utility import profile, user
 from blooddonor.helper.email import send_new_account_email
 from blooddonor.helper.image import save_image
 from blooddonor.models.usermodel import DonorModel
+from blooddonor.schemas.msg import Msg
 from blooddonor.schemas.user import (
     BloodGroupEnum,
     DistrictEnum,
@@ -292,3 +293,17 @@ async def upload_profile_img(
         )
     finally:
         return {"success": "Profile image upload successful."}
+
+
+@router.patch("/change_availability", response_model=Msg)
+async def change_availability(
+    db: Session = Depends(deps.get_db),
+    current_user: DonorModel = Depends(deps.get_current_active_user),
+) -> Msg:
+    if current_user.is_available:
+        current_user.is_available = False
+    else:
+        current_user.is_available = True
+    user_in = jsonable_encoder(current_user)
+    await user.update(db, db_obj=current_user, obj_in=UserUpdateBase(**user_in))
+    return Msg(msg="Availability status has been changed.")
