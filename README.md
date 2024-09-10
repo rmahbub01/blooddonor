@@ -63,42 +63,45 @@ Refer to the [interactive API docs](http://127.0.0.1:8000/docs) for a full list 
 
 ##### Create ```.env``` file in the project directory
 
-    
-    ```
-    PROJECT_NAME=BloodDonor
-    SERVER_NAME=127.0.0.1:8000
-    SERVER_HOST=http://localtest.me
-    # your allowed domain for frontend goes in cors origin
-    # Leave it blank until production
-    BACKEND_CORS_ORIGINS=[]
-
-    # this project is designed to use only sqlite
-    SQLALCHEMY_DATABASE_URI=sqlite+aiosqlite:///./blood_donor_db.db
-
-    FIRST_SUPERUSER=admin
-    FIRST_SUPERUSER_PASSWORD=admin
-    FIRST_SUPERUSER_GENDER=<male | female | other>
-    FIRST_SUPERUSER_EMAIL=admin@gmail.com
-    FIRST_SUPERUSER_MOBILE=<015******** bd mobile no. without +88>
-    FIRST_SUPERUSER_NID=<nid card number>
-    FIRST_SUPERUSER_DISTRICT=<dhaka for more option see docs>
-    FIRST_SUPERUSER_BLOOD_GROUP=<b+ for more option see docs>
-    FIRST_SUPERUSER_STUDENTSHIP_STATUS=<4th for more option see docs>
-
-    #use smtp for emailing
-    # set SMTP_TLS to True to send password reset email
-    SMTP_TLS=False
-    SMTP_PORT=587
-    SMTP_HOST=smtp.gmail.com
-    SMTP_USER=<email>
-    SMTP_PASSWORD=<smtp password or app password>
-    EMAILS_ENABLED=False or True (if True user will receive email after account creation)
-    EMAILS_FROM_EMAIL=<company email or just email>
-    EMAILS_FROM_NAME=BloodDonor
-
-    # Automatics Documentations UI. Set None to disable
-    # if you want to disable the automatic docs then uncomment the two lines below
-    # DOCS_URL=None
-    # REDOC_URL=None
-    ```
+ ```python
+   PROJECT_NAME=BloodDonor
+   SERVER_NAME=127.0.0.1:8000
+   SERVER_HOST=http://localtest.me
+   # secret key use only in productions
+   #SECRET_KEY=length of 32 string
+   
+   # your allowed domain for frontend goes in cors origin
+   # Leave it blank until production
+   BACKEND_CORS_ORIGINS=[]
+   
+   # this project is designed to use only sqlite
+   SQLALCHEMY_DATABASE_URI=sqlite+aiosqlite:///./blood_donor_db.db
+   
+   FIRST_SUPERUSER=admin
+   FIRST_SUPERUSER_PASSWORD=admin
+   FIRST_SUPERUSER_GENDER=<male | female | other>
+   FIRST_SUPERUSER_EMAIL=admin@gmail.com
+   FIRST_SUPERUSER_MOBILE=<015******** bd mobile no. without +88>
+   FIRST_SUPERUSER_NID=<nid card number>
+   FIRST_SUPERUSER_DISTRICT=<dhaka for more option see docs>
+   FIRST_SUPERUSER_BLOOD_GROUP=<b+ for more option see docs>
+   FIRST_SUPERUSER_STUDENTSHIP_STATUS=<4th for more option see docs>
+   
+   #use smtp for emailing
+   # set SMTP_TLS to True to send password reset email
+   SMTP_TLS=False
+   SMTP_PORT=587
+   SMTP_HOST=smtp.gmail.com
+   SMTP_USER=<email>
+   SMTP_PASSWORD=<smtp password or app password>
+   EMAILS_ENABLED=False
+   EMAIL_VERIFICATION_FOR_ACCOUNT=True
+   EMAILS_FROM_EMAIL=<company email or just email>
+   EMAILS_FROM_NAME=BloodDonor
+   
+   # Automatics Documentations UI. Set None to disable
+   # if you want to disable the automatic docs then uncomment the two lines below
+   # DOCS_URL=None
+   # REDOC_URL=None
+ ```
 
