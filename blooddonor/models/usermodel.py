@@ -46,5 +46,5 @@ class ProfileModel(Base):
     linkedin = Column(String, nullable=True, default=None)
     website = Column(String, nullable=True, default=None)
     # relationship
-    donor_id = Column(String, ForeignKey("donormodel.id", ondelete="CASCADE"))
+    donor_id = Column(String, ForeignKey("donormodel.id", ondelete="SET NULL"))
     donor = relationship("DonorModel", back_populates="profile")

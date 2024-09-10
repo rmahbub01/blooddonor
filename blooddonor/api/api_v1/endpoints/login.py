@@ -115,7 +115,7 @@ async def change_password(
     hashed_password = await get_password_hash(new_password.password)
     current_user.hashed_password = hashed_password
     db.add(current_user)
-    await db.commit()
+    await db.commit()  # noqa
     return {"msg": "Password updated successfully"}
 
 
@@ -145,5 +145,5 @@ async def reset_password(
     hashed_password = await get_password_hash(body.password)
     donor.hashed_password = hashed_password
     db.add(donor)
-    await db.commit()
+    await db.commit()  # noqa
     return Msg(msg="Password reset successful!")

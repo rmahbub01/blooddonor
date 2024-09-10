@@ -32,6 +32,7 @@ from blooddonor.schemas.user import (
     GenderEnum,
     ProfileResponse,
     StudentShipStatusEnum,
+    UpdateProfile,
     UserApi,
     UserCreateBase,
     UserUpdateBase,
@@ -74,17 +75,17 @@ async def create_user(
     return users
 
 
-@router.get("/delete_user/{email}", status_code=status.HTTP_200_OK)
+@router.delete("/delete_user/{email}", response_model=Msg)
 async def delete_user(
-    db: Session = Depends(deps.get_db),
     *,
     email: EmailStr,
+    db: Session = Depends(deps.get_db),
     current_user: DonorModel = Depends(deps.get_current_active_superuser),
 ):
     donor = await user.get_by_email(db, email=email)
     if donor:
-        await user.remove(db, id)
-        return {"success": "The user has been removed!"}
+        await user.remove(db, id=donor.id)
+        return Msg(msg="The user has been removed!")
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="There is no user with this email!",
@@ -129,8 +130,6 @@ async def update_user_me(
 
 @router.get("/me", response_model=UserApi)
 async def read_user_me(
-    request: Request,
-    db: Session = Depends(deps.get_db),
     current_user: DonorModel = Depends(deps.get_current_user),
 ) -> Any:
     """
@@ -141,7 +140,6 @@ async def read_user_me(
 
 @router.get("/read_profile/{user_id}", response_model=ProfileResponse)
 async def read_profile(
-    request: Request,
     user_id: str,
     db: Session = Depends(deps.get_db),
 ) -> Any:
@@ -154,6 +152,25 @@ async def read_profile(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No profile found with this user id.",
         )
+    return donor_profile
+
+
+@router.patch("/update_profile/me", response_model=ProfileResponse)
+async def update_profile(
+    user_in: UpdateProfile,
+    db: Session = Depends(deps.get_db),
+    current_user: DonorModel = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Read current user/donor profile.
+    """
+    donor_profile = await profile.get(db, donor_id=current_user.id)
+    if not donor_profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No profile found with this user id.",
+        )
+    await profile.update(db, db_obj=donor_profile, obj_in=user_in)
     return donor_profile
 
 
