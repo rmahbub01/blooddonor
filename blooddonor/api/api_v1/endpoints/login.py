@@ -95,8 +95,8 @@ async def recover_password(
     # email will be sent in the background
     background_tasks.add_task(
         send_reset_password_email,
-        email_to=users.email,
-        email=email,
+        username=users.full_name,
+        email=users.email,
         token=password_reset_token,
     )
 

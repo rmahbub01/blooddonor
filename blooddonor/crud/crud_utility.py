@@ -12,6 +12,7 @@ from blooddonor.schemas.user import (
     UserUpdateBase,
 )
 
+from ..core.config import settings
 from .base import CRUDBase
 
 
@@ -101,28 +102,15 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
 
     @override
     async def create(self, db: Session, obj_in: UserCreateBase) -> DonorModel | None:
-        db_obj: DonorModel = DonorModel(
-            full_name=obj_in.full_name,
-            email=obj_in.email,
-            mobile=obj_in.mobile,
-            nid=obj_in.nid,
-            gender=obj_in.gender,
-            district=obj_in.district,
-            blood_group=obj_in.blood_group,
-            studentship_status=obj_in.studentship_status,
-            is_available=obj_in.is_available,
-            hashed_password=await security.get_password_hash(obj_in.password),
-            is_active=obj_in.is_active,
-            is_admin=obj_in.is_admin,
-            is_superuser=obj_in.is_superuser,
-        )
-
+        db_obj: DonorModel = DonorModel(**obj_in.model_dump(exclude_unset=True))  # noqa
+        hashed_password = await security.get_password_hash(obj_in.password)
+        db_obj.hashed_password = hashed_password
         # profile data
-        ProfileModel(donor=db_obj)
+        ProfileModel(donor=db_obj)  # noqa
         # adding user to database
         db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        await db.commit()  # noqa
+        await db.refresh(db_obj)  # noqa
         return db_obj
 
     @override

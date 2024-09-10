@@ -44,3 +44,4 @@ typing_extensions==4.12.2
 urllib3==2.2.2
 uvicorn==0.30.6
 pillow==10.4.0
+bcrypt==3.2.2

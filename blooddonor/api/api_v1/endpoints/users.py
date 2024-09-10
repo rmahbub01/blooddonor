@@ -17,10 +17,15 @@ from sqlalchemy.orm import Session
 from blooddonor.api import deps
 from blooddonor.core.config import settings
 from blooddonor.crud.crud_utility import profile, user
-from blooddonor.helper.email import send_new_account_email
+from blooddonor.helper.email import (
+    generate_password_reset_token,
+    send_new_account_email,
+    verify_password_reset_token,
+)
 from blooddonor.helper.image import save_image
 from blooddonor.models.usermodel import DonorModel
 from blooddonor.schemas.msg import Msg
+from blooddonor.schemas.token import AccountVerifyToken
 from blooddonor.schemas.user import (
     BloodGroupEnum,
     DistrictEnum,
@@ -66,15 +71,6 @@ async def create_user(
             detail="The user with this username already exists in the system.",
         )
     users = await user.create(db, obj_in=user_in)
-    if settings.EMAILS_ENABLED and user_in.email:
-        # email will be sent in the background
-        background_tasks.add_task(
-            send_new_account_email,
-            email_to=user_in.email,
-            username=user_in.email,
-            password=user_in.password,
-        )
-
     return users
 
 
@@ -200,19 +196,42 @@ async def create_user_open(
         blood_group=blood_group,
         studentship_status=studentship_status,
         password=password,
+        is_active=False,
     )
 
     users = await user.create(db, obj_in=user_in)
     if settings.EMAILS_ENABLED and user_in.email:
         # email will be sent in the background
+        password_reset_token = await generate_password_reset_token(email=email)
         background_tasks.add_task(
             send_new_account_email,
-            email_to=user_in.email,
-            username=user_in.mobile,
-            password=user_in.password,
+            username=user_in.full_name,
+            email=user_in.email,
+            token=password_reset_token,
         )
 
     return users
+
+
+@router.post("/verify-account")
+async def verify_account(
+    body: AccountVerifyToken, db: Session = Depends(deps.get_db)
+) -> Any:
+    email = await verify_password_reset_token(token=body.token)
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
+        )
+    donor = await user.get_by_email(db, email=email)
+    if not donor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="The user does not exist in the system.",
+        )
+    donor.is_active = True
+    db.add(donor)
+    await db.commit()  # noqa
+    return Msg(msg="Account verification successful.")
 
 
 @router.get("/read_user/{user_email}", response_model=UserApi)

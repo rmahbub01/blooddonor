@@ -8,5 +8,9 @@ class Token(BaseModel):
     token_type: str
 
 
+class AccountVerifyToken(BaseModel):
+    token: str
+
+
 class TokenPayload(BaseModel):
     sub: Optional[str] = None
