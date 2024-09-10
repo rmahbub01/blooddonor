@@ -41,6 +41,12 @@ class Settings(BaseSettings):
     EMAIL_TEMPLATES_DIR: str = "./blooddonor/email_templates"
     EMAILS_ENABLED: bool = False
 
+    @model_validator(mode="after")
+    def set_default_emails_from(self):
+        if not self.EMAILS_FROM_NAME:
+            self.EMAILS_FROM_NAME = self.PROJECT_NAME
+        return self
+
     @model_validator(mode="before")
     def get_emails_enabled(cls, values: dict[str, Any]) -> dict[str, Any]:
         if (
