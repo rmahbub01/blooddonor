@@ -18,22 +18,27 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
 
     async def get(self, db: Session, id: uuid.UUID) -> ModelType | None:
         query = select(self.model).where(self.model.id == id)
-        result = await db.execute(query)
+        result = await db.execute(query)  # noqa
         return result.scalars().first()
 
     async def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> list[ModelType]:
-        query = select(self.model).offset(skip).limit(limit)
-        result = await db.execute(query)
+        query = (
+            select(self.model)
+            .where(self.model.is_available == bool(True))
+            .offset(skip)
+            .limit(limit)
+        )
+        result = await db.execute(query)  # noqa
         return result.scalars().all()
 
     async def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)  # type: ignore
         db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        await db.commit()  # noqa
+        await db.refresh(db_obj)  # noqa
         return db_obj
 
     async def update(
@@ -52,12 +57,12 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
         db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        await db.commit()  # noqa
+        await db.refresh(db_obj)  # noqa
         return db_obj
 
     async def remove(self, db: Session, *, id: uuid.UUID) -> ModelType:
         query = await self.get(db, id)
-        await db.delete(query)
-        await db.commit()
+        await db.delete(query)  # noqa
+        await db.commit()  # noqa
         return query

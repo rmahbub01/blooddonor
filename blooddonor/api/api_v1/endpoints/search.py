@@ -68,20 +68,6 @@ async def get_donor_by_studentship_status(
     return donors
 
 
-@router.get("/availability", response_model=list[UserApi])
-async def get_donor_by_studentship_status(
-    *,
-    availability: bool | None = Query(None),
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(deps.get_db),
-) -> Any:
-    donors = await user.get_by_availability(
-        db, availability=availability, skip=skip, limit=limit
-    )
-    return donors
-
-
 @router.get("/name", response_model=list[UserApi])
 async def get_donor_by_name(
     *,

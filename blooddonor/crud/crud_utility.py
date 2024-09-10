@@ -21,12 +21,12 @@ from .base import CRUDBase
 class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     async def get_by_mobile(self, db: Session, mobile: str) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.mobile == mobile)
-        result = await db.execute(query)
+        result = await db.execute(query)  # noqa
         return result.scalars().first()
 
     async def get_by_email(self, db: Session, email: str) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.email == email)
-        result = await db.execute(query)
+        result = await db.execute(query)  # noqa
         return result.scalars().first()
 
     async def get_by_blood_group(
@@ -38,7 +38,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             .offset(skip)
             .limit(limit)
         )
-        results = await db.execute(query)
+        results = await db.execute(query)  # noqa
         return results.scalars().all()
 
     async def get_by_gender(
@@ -50,7 +50,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             .offset(skip)
             .limit(limit)
         )
-        results = await db.execute(query)
+        results = await db.execute(query)  # noqa
         return results.scalars().all()
 
     async def get_by_district(
@@ -62,7 +62,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             .offset(skip)
             .limit(limit)
         )
-        results = await db.execute(query)
+        results = await db.execute(query)  # noqa
         return results.scalars().all()
 
     async def get_by_studentship_status(
@@ -74,7 +74,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             .offset(skip)
             .limit(limit)
         )
-        results = await db.execute(query)
+        results = await db.execute(query)  # noqa
         return results.scalars().all()
 
     async def get_by_availability(
@@ -86,7 +86,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             .offset(skip)
             .limit(limit)
         )
-        results = await db.execute(query)
+        results = await db.execute(query)  # noqa
         return results.scalars().all()
 
     async def get_by_name(
@@ -98,7 +98,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             .offset(skip)
             .limit(limit)
         )
-        results = await db.execute(query)
+        results = await db.execute(query)  # noqa
         return results.scalars().all()
 
     @override
@@ -156,7 +156,7 @@ class CRUDProfile(CRUDBase[ProfileModel, UserProfile, UpdateProfile]):
     @override
     async def get(self, db: Session, donor_id: uuid.UUID) -> ProfileModel | None:
         query = select(self.model).where(self.model.donor_id == donor_id)
-        result = await db.execute(query)
+        result = await db.execute(query)  # noqa
         return result.scalars().first()
 
 
