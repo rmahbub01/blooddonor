@@ -34,7 +34,10 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     ) -> list[DonorModel]:
         query = (
             select(self.model)
-            .where(self.model.blood_group == blood_group)
+            .where(
+                (self.model.blood_group == blood_group)
+                & (self.model.is_available == bool(True))
+            )
             .offset(skip)
             .limit(limit)
         )
@@ -46,7 +49,9 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     ) -> list[DonorModel]:
         query = (
             select(self.model)
-            .where(self.model.gender == gender)
+            .where(
+                (self.model.gender == gender) & (self.model.is_available == bool(True))
+            )
             .offset(skip)
             .limit(limit)
         )
@@ -58,7 +63,10 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     ) -> list[DonorModel]:
         query = (
             select(self.model)
-            .where(self.model.district == district)
+            .where(
+                (self.model.district == district)
+                & (self.model.is_available == bool(True))
+            )
             .offset(skip)
             .limit(limit)
         )
@@ -70,19 +78,10 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     ) -> list[DonorModel]:
         query = (
             select(self.model)
-            .where(self.model.studentship_status == studentship_status)
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
-    async def get_by_availability(
-        self, db: Session, *, availability: bool, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(self.model.is_available == availability)
+            .where(
+                (self.model.studentship_status == studentship_status)
+                & (self.model.is_available == bool(True))
+            )
             .offset(skip)
             .limit(limit)
         )
@@ -94,7 +93,10 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     ) -> list[DonorModel]:
         query = (
             select(self.model)
-            .where(self.model.full_name.ilike(f"%{name}%"))
+            .where(
+                (self.model.full_name.ilike(f"%{name}%"))
+                & (self.model.is_available == bool(True))
+            )
             .offset(skip)
             .limit(limit)
         )

@@ -12,7 +12,6 @@ cssselect==1.2.0
 cssutils==2.11.1
 databases==0.9.0
 dnspython==2.6.1
-ecdsa==0.19.0
 email_validator==2.2.0
 emails==0.6
 fastapi==0.112.2

@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 @router.get("/gender", response_model=list[UserApi])
-async def get_donor_by_blood_group(
+async def get_donor_by_gender(
     *,
     gender: GenderEnum | None = Query(None),
     skip: int = 0,
