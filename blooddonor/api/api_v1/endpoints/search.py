@@ -1,6 +1,6 @@
 from typing import Any
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from blooddonor.api import deps
@@ -25,6 +25,11 @@ async def get_donor_by_gender(
     db: Session = Depends(deps.get_db),
 ) -> Any:
     donors = await user.get_by_gender(db, gender=gender, skip=skip, limit=limit)
+    if not donors:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Donor/s not found with selected gender",
+        )
     return donors
 
 
@@ -37,6 +42,11 @@ async def get_donor_by_district(
     db: Session = Depends(deps.get_db),
 ) -> Any:
     donors = await user.get_by_district(db, district=district, skip=skip, limit=limit)
+    if not donors:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Donor/s not found with selected district",
+        )
     return donors
 
 
@@ -51,6 +61,11 @@ async def get_donor_by_blood_group(
     donors = await user.get_by_blood_group(
         db, blood_group=blood_group, skip=skip, limit=limit
     )
+    if not donors:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Donor/s not found with selected blood group",
+        )
     return donors
 
 
@@ -65,6 +80,11 @@ async def get_donor_by_studentship_status(
     donors = await user.get_by_studentship_status(
         db, studentship_status=studentship_status, skip=skip, limit=limit
     )
+    if not donors:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Donor/s not found with selected Studentship status",
+        )
     return donors
 
 
@@ -77,4 +97,9 @@ async def get_donor_by_name(
     db: Session = Depends(deps.get_db),
 ) -> Any:
     donors = await user.get_by_name(db, name=name, skip=skip, limit=limit)
+    if not donors:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Donor/s not found with this name",
+        )
     return donors

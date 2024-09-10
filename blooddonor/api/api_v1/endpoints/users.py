@@ -245,7 +245,7 @@ async def read_user_by_email(
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
-    Get a specific user by id.
+    Get a specific user by email.
     """
     users = await user.get_by_email(db, email=user_email)
     if users:
