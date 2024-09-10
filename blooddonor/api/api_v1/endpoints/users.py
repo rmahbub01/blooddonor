@@ -1,3 +1,4 @@
+import uuid
 from typing import Any
 
 from fastapi import (
@@ -142,13 +143,18 @@ async def read_user_me(
 @router.get("/read_profile/{user_id}", response_model=ProfileResponse)
 async def read_profile(
     request: Request,
-    user_id,
+    user_id: str,
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Read current user/donor profile.
     """
     donor_profile = await profile.get(db, donor_id=user_id)
+    if not donor_profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No profile found with this user id.",
+        )
     return donor_profile
 
 
@@ -196,11 +202,11 @@ async def create_user_open(
         blood_group=blood_group,
         studentship_status=studentship_status,
         password=password,
-        is_active=False,
     )
 
     users = await user.create(db, obj_in=user_in)
     if settings.EMAILS_ENABLED and user_in.email:
+        user_in.is_active = False
         # email will be sent in the background
         password_reset_token = await generate_password_reset_token(email=email)
         background_tasks.add_task(

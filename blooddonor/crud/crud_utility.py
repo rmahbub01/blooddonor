@@ -1,3 +1,4 @@
+import uuid
 from typing import Any, override
 
 from sqlalchemy import select
@@ -153,7 +154,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
 
 class CRUDProfile(CRUDBase[ProfileModel, UserProfile, UpdateProfile]):
     @override
-    async def get(self, db: Session, donor_id: Any) -> ProfileModel | None:
+    async def get(self, db: Session, donor_id: uuid.UUID) -> ProfileModel | None:
         query = select(self.model).where(self.model.donor_id == donor_id)
         result = await db.execute(query)
         return result.scalars().first()
