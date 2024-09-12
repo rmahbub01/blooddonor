@@ -76,7 +76,6 @@ async def logout(response: Response):
 
 @router.post("/password-recovery/{email}", response_model=Msg)
 async def recover_password(
-    request: Request,
     email: str,
     background_tasks: BackgroundTasks,
     db: Session = Depends(deps.get_db),
