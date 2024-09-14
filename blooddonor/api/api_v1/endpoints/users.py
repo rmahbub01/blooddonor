@@ -28,6 +28,7 @@ from blooddonor.schemas.msg import Msg
 from blooddonor.schemas.token import AccountVerifyToken
 from blooddonor.schemas.user import (
     BloodGroupEnum,
+    DepartmentsEnum,
     DistrictEnum,
     GenderEnum,
     ProfileResponse,
@@ -97,7 +98,6 @@ async def update_user_me(
     *,
     db: Session = Depends(deps.get_db),
     full_name: str | None = Body(None),
-    email: EmailStr | None = Body(None),
     mobile: str | None = Body(None),
     district: DistrictEnum | None = Body(None),
     studentship_status: StudentShipStatusEnum | None = Body(None),
@@ -114,8 +114,6 @@ async def update_user_me(
         user_in.password = password
     if full_name is not None:
         user_in.full_name = full_name
-    if email is not None:
-        user_in.email = email
     if mobile is not None:
         user_in.mobile = mobile
     if district is not None:
@@ -185,7 +183,8 @@ async def create_user_open(
     full_name: str = Body(...),
     email: EmailStr = Body(...),
     mobile: str = Body(...),
-    nid: str = Body(...),
+    department: DepartmentsEnum = Body(...),
+    student_id: str = Body(...),
     gender: GenderEnum = Body(...),
     district: DistrictEnum = Body(...),
     blood_group: BloodGroupEnum = Body(...),
@@ -212,7 +211,8 @@ async def create_user_open(
         full_name=full_name,
         email=email,
         mobile=mobile,
-        nid=nid,
+        department=department,
+        student_id=student_id,
         gender=gender,
         district=district,
         blood_group=blood_group,
@@ -347,4 +347,6 @@ async def change_availability(
         current_user.is_available = True
     user_in = jsonable_encoder(current_user)
     await user.update(db, db_obj=current_user, obj_in=UserUpdateBase(**user_in))
-    return Msg(msg="Availability status has been changed.")
+    return Msg(
+        msg=f"Availability status has been changed. Now {"available" if current_user.is_available else "unavailable"}"
+    )

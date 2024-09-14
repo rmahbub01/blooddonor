@@ -7,6 +7,7 @@ from blooddonor.api import deps
 from blooddonor.crud.crud_utility import user
 from blooddonor.schemas.user import (
     BloodGroupEnum,
+    DepartmentsEnum,
     DistrictEnum,
     GenderEnum,
     StudentShipStatusEnum,
@@ -101,5 +102,43 @@ async def get_donor_by_name(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Donor/s not found with this name",
+        )
+    return donors
+
+
+@router.get("/department", response_model=list[UserApi])
+async def get_donor_by_department(
+    *,
+    department: DepartmentsEnum | None = Query(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    donors = await user.get_by_department(
+        db, department=department, skip=skip, limit=limit
+    )
+    if not donors:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Donor/s not found at this department.",
+        )
+    return donors
+
+
+@router.get("/student_id", response_model=list[UserApi])
+async def get_donor_by_student_id(
+    *,
+    student_id: str | None = Query(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    donors = await user.get_by_student_id(
+        db, student_id=student_id, skip=skip, limit=limit
+    )
+    if not donors:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Donor/s not found with this student id.",
         )
     return donors

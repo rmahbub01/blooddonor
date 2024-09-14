@@ -28,7 +28,8 @@ async def init_db(db: Session) -> None:
             full_name=settings.FIRST_SUPERUSER,
             email=settings.FIRST_SUPERUSER_EMAIL,
             mobile=settings.FIRST_SUPERUSER_MOBILE,
-            nid=settings.FIRST_SUPERUSER_NID,
+            department=settings.FIRST_SUPERUSER_DEPARTMENT,
+            student_id=settings.FIRST_SUPERUSER_STUDENT_ID,
             gender=settings.FIRST_SUPERUSER_GENDER,
             district=settings.FIRST_SUPERUSER_DISTRICT,
             blood_group=settings.FIRST_SUPERUSER_BLOOD_GROUP,
@@ -38,4 +39,4 @@ async def init_db(db: Session) -> None:
             is_admin=True,
         )
         await user.create(db, obj_in=user_in)
-    await db.close()
+    await db.close()  # noqa

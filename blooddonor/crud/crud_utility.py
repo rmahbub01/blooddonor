@@ -88,6 +88,36 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
         results = await db.execute(query)  # noqa
         return results.scalars().all()
 
+    async def get_by_department(
+        self, db: Session, *, department: int, skip: int = 0, limit: int = 100
+    ) -> list[DonorModel]:
+        query = (
+            select(self.model)
+            .where(
+                (self.model.department == department)
+                & (self.model.is_available == bool(True))
+            )
+            .offset(skip)
+            .limit(limit)
+        )
+        results = await db.execute(query)  # noqa
+        return results.scalars().all()
+
+    async def get_by_student_id(
+        self, db: Session, *, student_id: str, skip: int = 0, limit: int = 100
+    ) -> list[DonorModel]:
+        query = (
+            select(self.model)
+            .where(
+                (self.model.student_id == student_id)
+                & (self.model.is_available == bool(True))
+            )
+            .offset(skip)
+            .limit(limit)
+        )
+        results = await db.execute(query)  # noqa
+        return results.scalars().all()
+
     async def get_by_name(
         self, db: Session, *, name: str, skip: int = 0, limit: int = 100
     ) -> list[DonorModel]:
