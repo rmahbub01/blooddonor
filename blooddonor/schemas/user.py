@@ -100,7 +100,7 @@ class StudentShipStatusEnum(str, Enum):
     EMPLOYED = "employed"
 
 
-class DepartmentsEnum(int, Enum):
+class DepartmentsEnum(str, Enum):
     ARABIC = 1
     BANGLADESH_STUDIES = 2
     BENGALI = 3
@@ -162,7 +162,7 @@ class UserBase(BaseModel):
     email: EmailStr
     mobile: str
     department: DepartmentsEnum
-    student_id: str | int
+    student_id: str
     gender: GenderEnum
     district: DistrictEnum
     blood_group: BloodGroupEnum
@@ -188,7 +188,7 @@ class UserBase(BaseModel):
 
     @field_validator("student_id")
     def student_id_validator(cls, v):
-        student_id_regex = r"[2-9]{1}[\d]{1}[123]{1}[\d]{5}"
+        student_id_regex = r"[1-9]{1}[\d]{1}[1-9]{1}[\d]{5}"
         if len(str(v)) == 8 and re.match(student_id_regex, str(v)):
             return v
         raise ValueError("The student id is not valid.")
@@ -205,7 +205,7 @@ class UserCreateBase(UserBase):
     email: EmailStr
     mobile: str
     department: DepartmentsEnum
-    student_id: str | int
+    student_id: str
     gender: GenderEnum
     district: DistrictEnum
     blood_group: BloodGroupEnum
