@@ -68,7 +68,8 @@ Refer to the [interactive API docs](http://127.0.0.1:8000/docs) for a full list 
    SERVER_NAME=127.0.0.1:8000
    SERVER_HOST=http://localtest.me
    # secret key use only in productions
-   #SECRET_KEY=length of 32 string
+   # Change this key using openssl rand -hex 32 in production
+   SECRET_KEY=e7349af4f2d09ec73a820455615fafae531a36b22eb16553060d0fc4be7fc02e
    
    # your allowed domain for frontend goes in cors origin
    # Leave it blank until production
@@ -82,7 +83,8 @@ Refer to the [interactive API docs](http://127.0.0.1:8000/docs) for a full list 
    FIRST_SUPERUSER_GENDER=<male | female | other>
    FIRST_SUPERUSER_EMAIL=admin@gmail.com
    FIRST_SUPERUSER_MOBILE=<015******** bd mobile no. without +88>
-   FIRST_SUPERUSER_NID=<nid card number>
+   FIRST_SUPERUSER_DEPARTMENT=41
+   FIRST_SUPERUSER_STUDENT_ID=20204006
    FIRST_SUPERUSER_DISTRICT=<dhaka for more option see docs>
    FIRST_SUPERUSER_BLOOD_GROUP=<b+ for more option see docs>
    FIRST_SUPERUSER_STUDENTSHIP_STATUS=<4th for more option see docs>
