@@ -203,7 +203,8 @@ class UserBase(BaseModel):
     is_active: bool = True
     is_admin: bool = False
     is_superuser: bool = False
-    created_on: datetime.datetime = datetime.datetime.now(datetime.UTC)
+    created_on: datetime.datetime | None = None
+
 
     @field_validator("full_name")
     def name_validator(cls, v):
