@@ -89,7 +89,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
         return results.scalars().all()
 
     async def get_by_department(
-        self, db: Session, *, department: int, skip: int = 0, limit: int = 100
+        self, db: Session, *, department: str, skip: int = 0, limit: int = 100
     ) -> list[DonorModel]:
         query = (
             select(self.model)
