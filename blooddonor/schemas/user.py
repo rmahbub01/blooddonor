@@ -101,89 +101,76 @@ class StudentShipStatusEnum(str, Enum):
 
 
 class DepartmentsEnum(str, Enum):
-    # Arts and Humanities
-    ARABIC = "1"
-    BANGLADESH_STUDIES = "2"
-    BANGLA = "3"
-    DRAMATICS = "4"
-    EDUCATION_AND_RESEARCH = "5"
-    ENGLISH = "6"
-    ENGLISH_TEACHERS_OF_ARTS_AND_HUMANITIES_FACULTY = "7"
-    FINE_ARTS = "8"
-    HISTORY = "9"
-    ISLAMIC_HISTORY_AND_CULTURE = "10"
-    ISLAMIC_STUDIES = "11"
-    MODERN_LANGUAGES = "12"
-    MUSIC = "13"
-    PALI = "14"
-    PERSIAN_LANGUAGE_AND_LITERATURE = "15"
-    PHILOSOPHY = "16"
-    SANSKRIT = "17"
+    # Faculty of Arts and Humanities
+    BANGLA = "101"
+    ENGLISH = "102"
+    HISTORY = "103"
+    ISLAMIC_HISTORY_AND_CULTURE = "104"
+    PHILOSOPHY = "105"
+    FINE_ARTS = "106"
+    ARABIC = "107"
+    PALI = "108"
+    ISLAMIC_STUDIES = "110"
+    DRAMATICS = "111"
+    PERSIAN_LANGUAGE_AND_LITERATURE = "112"
+    EDUCATION_AND_RESEARCH = "113"
+    MODERN_LANGUAGES = "114"
+    SANSKRIT = "115"
+    MUSIC = "116"
+    BANGLADESH_STUDIES = "117"
 
-    # Science
-    APPLIED_CHEMISTRY_AND_CHEMICAL_ENGINEERING = "18"
-    CHEMISTRY = "19"
-    ENGLISH_TEACHERS_OF_SCIENCE_FACULTY = "20"
-    FORESTRY_AND_ENVIRONMENTAL_SCIENCES = "21"
-    JAMAL_NAZRUL_ISLAM_RESEARCH_CENTRE = "22"
-    MATHEMATICS = "23"
-    PHYSICS = "24"
-    STATISTICS = "25"
+    # Faculty of Science
+    PHYSICS = "201"
+    CHEMISTRY = "202"
+    MATHEMATICS = "203"
+    STATISTICS = "204"
+    FORESTRY_AND_ENVIRONMENTAL_SCIENCES = "208"
+    APPLIED_CHEMISTRY_AND_CHEMICAL_ENGINEERING = "209"
 
-    # Business Administration
-    ACCOUNTING = "26"
-    BANKING_AND_INSURANCE = "27"
-    BUREAU_OF_BUSINESS_RESEARCH = "28"
-    CENTER_FOR_BUSINESS_ADMINISTRATION = "29"
-    ENGLISH_TEACHERS_OF_BUSINESS_ADMINISTRATION_FACULTY = "30"
-    FINANCE = "31"
-    HUMAN_RESOURCE_MANAGEMENT = "32"
-    MANAGEMENT = "33"
-    MARKETING = "34"
+    # Faculty of Business Administration
+    ACCOUNTING = "301"
+    MANAGEMENT = "302"
+    FINANCE = "303"
+    MARKETING = "304"
+    HUMAN_RESOURCE_MANAGEMENT = "305"
+    BANKING_AND_INSURANCE = "306"
 
-    # Social Sciences
-    ANTHROPOLOGY = "35"
-    COMMUNICATION_AND_JOURNALISM = "36"
-    CRIMINOLOGY_AND_POLICE_SCIENCE = "37"
-    DEVELOPMENT_STUDIES = "38"
-    ECONOMICS = "39"
-    ENGLISH_TEACHERS_OF_SOCIAL_SCIENCES_FACULTY = "40"
-    INTERNATIONAL_RELATIONS = "41"
-    POLITICAL_SCIENCE = "42"
-    PUBLIC_ADMINISTRATION = "43"
-    SOCIAL_SCIENCE_RESEARCH = "44"
-    SOCIOLOGY = "45"
+    # Faculty of Social Sciences
+    ECONOMICS = "401"
+    POLITICAL_SCIENCE = "402"
+    SOCIOLOGY = "403"
+    PUBLIC_ADMINISTRATION = "404"
+    ANTHROPOLOGY = "405"
+    INTERNATIONAL_RELATIONS = "406"
+    COMMUNICATION_AND_JOURNALISM = "407"
+    DEVELOPMENT_STUDIES = "408"
+    CRIMINOLOGY_AND_POLICE_SCIENCE = "409"
 
-    # Law
-    LAW = "46"
+    # Faculty of Law
+    LAW = "501"
 
-    # Biological Sciences
-    BIOCHEMISTRY_AND_MOLECULAR_BIOLOGY = "47"
-    BOTANY = "48"
-    ENGLISH_TEACHERS_OF_BIOLOGICAL_SCIENCES_FACULTY = "49"
-    GEOGRAPHY_AND_ENVIRONMENTAL_STUDIES = "50"
-    GENETIC_ENGINEERING_AND_BIOTECHNOLOGY = "51"
-    MICROBIOLOGY = "52"
-    PHARMACY = "53"
-    PSYCHOLOGY = "54"
-    SOIL_SCIENCE = "55"
-    ZOOLOGY = "56"
+    # Faculty of Biological Sciences
+    ZOOLOGY = "601"
+    BOTANY = "602"
+    GEOGRAPHY_AND_ENVIRONMENTAL_STUDIES = "603"
+    BIOCHEMISTRY_AND_MOLECULAR_BIOLOGY = "604"
+    MICROBIOLOGY = "605"
+    SOIL_SCIENCE = "606"
+    GENETIC_ENGINEERING_AND_BIOTECHNOLOGY = "607"
+    PSYCHOLOGY = "608"
+    PHARMACY = "609"
 
-    # Engineering
-    COMPUTER_SCIENCE_AND_ENGINEERING = "57"
-    ELECTRICAL_AND_ELECTRONIC_ENGINEERING = "58"
+    # Faculty of Engineering
+    COMPUTER_SCIENCE_AND_ENGINEERING = "701"
+    ELECTRICAL_AND_ELECTRONIC_ENGINEERING = "702"
 
-    # Education
-    PHYSICAL_EDUCATION_AND_SPORTS_SCIENCE = "59"
+    # Faculty of Education
+    PHYSICAL_EDUCATION_AND_SPORTS_SCIENCE = "801"
 
-    # Marine Sciences and Fisheries
-    FISHERIES = "60"
-    MARINE_SCIENCES = "61"
-    OCEANOGRAPHY = "62"
-
-    # Medicine
-    COMMUNITY_OPHTHALMOLOGY = "63"
-    PAEDIATRICS = "64"
+    # Faculty of Marine Sciences and Fisheries
+    MARINE_SCIENCES = "901"
+    OCEANOGRAPHY = "902"
+    FISHERIES = "903"
 
 
 # User Schemas
@@ -205,7 +192,6 @@ class UserBase(BaseModel):
     is_superuser: bool = False
     created_on: datetime.datetime | None = None
 
-
     @field_validator("full_name")
     def name_validator(cls, v):
         if v is None or v.strip() == "":
@@ -218,18 +204,26 @@ class UserBase(BaseModel):
             return v
         raise ValueError("The number format is invalid. Use numbers like 017xxxxxxxx")
 
-    @field_validator("student_id")
-    def student_id_validator(cls, v):
-        student_id_regex = r"[1-9]{1}[\d]{1}[1-9]{1}[\d]{5}"
-        if len(str(v)) == 8 and re.match(student_id_regex, str(v)):
-            return v
-        raise ValueError("The student id is not valid.")
-
-    @field_validator("department")
+    @field_validator("department", mode="before")
     def department_validator(cls, v):
         if v in DepartmentsEnum:
             return v
         raise ValueError("The provided integer doesn't match with any department.")
+
+    @field_validator("student_id")
+    def student_id_validator(cls, v, info):
+        v = str(v)
+        department = info.data.get("department")
+        student_id_regex = r"[1-9]{1}[\d]{1}[1-9]{1}[\d]{5}"
+        if (
+            (len(v) == 8)
+            and re.match(student_id_regex, v)
+            and (str(department.value) == v[2:5])
+        ):
+            return v
+        raise ValueError(
+            "The student id is not valid or doesn't associated with respective department."
+        )
 
 
 class UserCreateBase(UserBase):

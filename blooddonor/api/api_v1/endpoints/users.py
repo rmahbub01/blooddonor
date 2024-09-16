@@ -192,90 +192,78 @@ async def create_user_open(
 ) -> Any:
     """
     Create new user without the need to be logged in.
-    Structure of department naming. User will prove just an integer.
-    # Arts and Humanities
-    ARABIC = "1"
-    BANGLADESH_STUDIES = "2"
-    BANGLA = "3"
-    DRAMATICS = "4"
-    EDUCATION_AND_RESEARCH = "5"
-    ENGLISH = "6"
-    ENGLISH_TEACHERS_OF_ARTS_AND_HUMANITIES_FACULTY = "7"
-    FINE_ARTS = "8"
-    HISTORY = "9"
-    ISLAMIC_HISTORY_AND_CULTURE = "10"
-    ISLAMIC_STUDIES = "11"
-    MODERN_LANGUAGES = "12"
-    MUSIC = "13"
-    PALI = "14"
-    PERSIAN_LANGUAGE_AND_LITERATURE = "15"
-    PHILOSOPHY = "16"
-    SANSKRIT = "17"
+    department_code (str): A string representing the department code. The available department codes are:
 
-    # Science
-    APPLIED_CHEMISTRY_AND_CHEMICAL_ENGINEERING = "18"
-    CHEMISTRY = "19"
-    ENGLISH_TEACHERS_OF_SCIENCE_FACULTY = "20"
-    FORESTRY_AND_ENVIRONMENTAL_SCIENCES = "21"
-    JAMAL_NAZRUL_ISLAM_RESEARCH_CENTRE = "22"
-    MATHEMATICS = "23"
-    PHYSICS = "24"
-    STATISTICS = "25"
+    - Faculty of Arts and Humanities:
+        * "101" - Bangla
+        * "102" - English
+        * "103" - History
+        * "104" - Islamic History and Culture
+        * "105" - Philosophy
+        * "106" - Fine Arts
+        * "107" - Arabic
+        * "108" - Pali
+        * "110" - Islamic Studies
+        * "111" - Dramatics
+        * "112" - Persian Language and Literature
+        * "113" - Education and Research
+        * "114" - Modern Languages
+        * "115" - Sanskrit
+        * "116" - Music
+        * "117" - Bangladesh Studies
 
-    # Business Administration
-    ACCOUNTING = "26"
-    BANKING_AND_INSURANCE = "27"
-    BUREAU_OF_BUSINESS_RESEARCH = "28"
-    CENTER_FOR_BUSINESS_ADMINISTRATION = "29"
-    ENGLISH_TEACHERS_OF_BUSINESS_ADMINISTRATION_FACULTY = "30"
-    FINANCE = "31"
-    HUMAN_RESOURCE_MANAGEMENT = "32"
-    MANAGEMENT = "33"
-    MARKETING = "34"
+    - Faculty of Science:
+        * "201" - Physics
+        * "202" - Chemistry
+        * "203" - Mathematics
+        * "204" - Statistics
+        * "208" - Forestry and Environmental Sciences
+        * "209" - Applied Chemistry and Chemical Engineering
 
-    # Social Sciences
-    ANTHROPOLOGY = "35"
-    COMMUNICATION_AND_JOURNALISM = "36"
-    CRIMINOLOGY_AND_POLICE_SCIENCE = "37"
-    DEVELOPMENT_STUDIES = "38"
-    ECONOMICS = "39"
-    ENGLISH_TEACHERS_OF_SOCIAL_SCIENCES_FACULTY = "40"
-    INTERNATIONAL_RELATIONS = "41"
-    POLITICAL_SCIENCE = "42"
-    PUBLIC_ADMINISTRATION = "43"
-    SOCIAL_SCIENCE_RESEARCH = "44"
-    SOCIOLOGY = "45"
+    - Faculty of Business Administration:
+        * "301" - Accounting
+        * "302" - Management
+        * "303" - Finance
+        * "304" - Marketing
+        * "305" - Human Resource Management
+        * "306" - Banking and Insurance
 
-    # Law
-    LAW = "46"
+    - Faculty of Social Sciences:
+        * "401" - Economics
+        * "402" - Political Science
+        * "403" - Sociology
+        * "404" - Public Administration
+        * "405" - Anthropology
+        * "406" - International Relations
+        * "407" - Communication and Journalism
+        * "408" - Development Studies
+        * "409" - Criminology and Police Science
 
-    # Biological Sciences
-    BIOCHEMISTRY_AND_MOLECULAR_BIOLOGY = "47"
-    BOTANY = "48"
-    ENGLISH_TEACHERS_OF_BIOLOGICAL_SCIENCES_FACULTY = "49"
-    GEOGRAPHY_AND_ENVIRONMENTAL_STUDIES = "50"
-    GENETIC_ENGINEERING_AND_BIOTECHNOLOGY = "51"
-    MICROBIOLOGY = "52"
-    PHARMACY = "53"
-    PSYCHOLOGY = "54"
-    SOIL_SCIENCE = "55"
-    ZOOLOGY = "56"
+    - Faculty of Law:
+        * "501" - Law
 
-    # Engineering
-    COMPUTER_SCIENCE_AND_ENGINEERING = "57"
-    ELECTRICAL_AND_ELECTRONIC_ENGINEERING = "58"
+    - Faculty of Biological Sciences:
+        * "601" - Zoology
+        * "602" - Botany
+        * "603" - Geography and Environmental Studies
+        * "604" - Biochemistry and Molecular Biology
+        * "605" - Microbiology
+        * "606" - Soil Science
+        * "607" - Genetic Engineering and Biotechnology
+        * "608" - Psychology
+        * "609" - Pharmacy
 
-    # Education
-    PHYSICAL_EDUCATION_AND_SPORTS_SCIENCE = "59"
+    - Faculty of Engineering:
+        * "701" - Computer Science and Engineering
+        * "702" - Electrical and Electronic Engineering
 
-    # Marine Sciences and Fisheries
-    FISHERIES = "60"
-    MARINE_SCIENCES = "61"
-    OCEANOGRAPHY = "62"
+    - Faculty of Education:
+        * "801" - Physical Education and Sports Science
 
-    # Medicine
-    COMMUNITY_OPHTHALMOLOGY = "63"
-    PAEDIATRICS = "64"
+    - Faculty of Marine Sciences and Fisheries:
+        * "901" - Marine Sciences
+        * "902" - Oceanography
+        * "903" - Fisheries
     """
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
