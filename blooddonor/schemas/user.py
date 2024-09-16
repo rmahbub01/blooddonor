@@ -219,6 +219,7 @@ class UserBase(BaseModel):
             (len(v) == 8)
             and re.match(student_id_regex, v)
             and (str(department.value) == v[2:5])
+            and (1 <= int(v[-3:]) <= 150)
         ):
             return v
         raise ValueError(
