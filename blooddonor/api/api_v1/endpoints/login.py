@@ -1,4 +1,5 @@
 import datetime
+import re
 from typing import Any
 
 from fastapi import (
@@ -40,9 +41,16 @@ async def login_access_token(
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    users = await user.authenticate(
-        db, mobile=form_data.username, password=form_data.password
-    )
+    mobile_regex = r"(?:\+88)?(01[\d]+)"
+    mobile = re.match(mobile_regex, form_data.username)
+    if mobile:
+        mobile = mobile.group(1)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Mobile number you provided is invalid.",
+        )
+    users = await user.authenticate(db, mobile=mobile, password=form_data.password)
     if not users:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not await user.is_active(users):

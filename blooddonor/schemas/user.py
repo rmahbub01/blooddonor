@@ -200,8 +200,12 @@ class UserBase(BaseModel):
 
     @field_validator("mobile")
     def mobile_validator(cls, v):
-        if len(v) == 11 and isinstance(int(v), int):
-            return v
+        mobile_regex = r"(?:\+88)?(01[\d]+)"
+        mobile = re.match(mobile_regex, v)
+        if mobile:
+            mobile = mobile.group(1)
+            if isinstance(int(v), int) and len(mobile) == 11:
+                return mobile
         raise ValueError("The number format is invalid. Use numbers like 017xxxxxxxx")
 
     @field_validator("department", mode="before")
