@@ -3,7 +3,7 @@ from PIL import Image
 STATIC_DIR = "./blooddonor/static"
 
 
-def save_image(file, user_id: str):
+async def save_image(file, user_id: str):
     output_size = (150, 150)
     img = Image.open(file.file)
     img.thumbnail(output_size)

@@ -391,7 +391,7 @@ async def upload_profile_img(
     current_user: DonorModel = Depends(deps.get_current_active_user),
 ):
     try:
-        save_image(file, current_user.id)
+        await save_image(file, current_user.id)
         profile_data = await profile.get(db, donor_id=current_user.id)
         profile_data.profile_img = f"{current_user.id}.png"
         await profile.update(
