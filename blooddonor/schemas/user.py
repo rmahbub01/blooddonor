@@ -204,7 +204,7 @@ class UserBase(BaseModel):
         mobile = re.match(mobile_regex, v)
         if mobile:
             mobile = mobile.group(1)
-            if isinstance(int(v), int) and len(mobile) == 11:
+            if isinstance(int(mobile), int) and len(mobile) == 11:
                 return mobile
         raise ValueError("The number format is invalid. Use numbers like 017xxxxxxxx")
 
@@ -212,7 +212,7 @@ class UserBase(BaseModel):
     def department_validator(cls, v):
         if v in DepartmentsEnum:
             return v
-        raise ValueError("The provided integer doesn't match with any department.")
+        raise ValueError("The provided dept code doesn't match with any department.")
 
     @field_validator("student_id")
     def student_id_validator(cls, v, info):
