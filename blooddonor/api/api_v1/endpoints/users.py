@@ -59,7 +59,6 @@ async def create_user(
     *,
     db: Session = Depends(deps.get_db),
     user_in: UserCreateBase,
-    background_tasks: BackgroundTasks,
     current_user: DonorModel = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
