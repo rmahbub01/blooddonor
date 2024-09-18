@@ -1,3 +1,4 @@
+import os
 from typing import Any
 
 from fastapi import (
@@ -10,6 +11,7 @@ from fastapi import (
     status,
 )
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import FileResponse
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 
@@ -420,3 +422,19 @@ async def change_availability(
     return Msg(
         msg=f"Availability status has been changed. Now {"available" if current_user.is_available else "unavailable"}"
     )
+
+
+@router.get("/get/profile_img/{user_id}", response_class=FileResponse)
+async def get_profile_img(user_id: str) -> str:
+    static_dir = "./blooddonor/static/images"
+    img_path = f"{static_dir}/{user_id}.png"
+    if os.path.isfile(img_path):
+        return img_path
+    else:
+        return f"{static_dir}/profile_img.png"
+
+
+@router.get("/counts")
+async def get_total_users(db: Session = Depends(deps.get_db)) -> dict:
+    donors_count: dict = await user.get_user_count(db)
+    return donors_count

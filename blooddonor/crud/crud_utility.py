@@ -1,7 +1,7 @@
 import uuid
 from typing import Any, override
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from blooddonor.core import security
@@ -28,6 +28,22 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
         query = select(DonorModel).where(DonorModel.email == email)
         result = await db.execute(query)  # noqa
         return result.scalars().first()
+
+    async def get_user_count(self, db: Session) -> dict | None:
+        # Query for total users
+        total_query = select(func.count(DonorModel.id))
+        total_result = await db.execute(total_query)  # noqa
+        total_count = total_result.scalar()
+
+        # Query for active users
+        active_query = select(func.count(DonorModel.id)).where(
+            DonorModel.is_available == bool(True)
+        )
+        active_result = await db.execute(active_query)  # noqa
+        active_count = active_result.scalar()
+
+        # Return both counts in a dictionary
+        return {"total_user_count": total_count, "active_user_count": active_count}
 
     async def get_by_blood_group(
         self, db: Session, *, blood_group: str, skip: int = 0, limit: int = 100
