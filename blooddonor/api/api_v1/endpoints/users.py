@@ -1,3 +1,4 @@
+import datetime
 import os
 from typing import Any
 
@@ -417,6 +418,8 @@ async def change_availability(
         current_user.is_available = False
     else:
         current_user.is_available = True
+    # update the donated_on field
+    current_user.donated_on = datetime.datetime.now(datetime.UTC)
     user_in = jsonable_encoder(current_user)
     await user.update(db, db_obj=current_user, obj_in=UserUpdateBase(**user_in))
     return Msg(

@@ -47,6 +47,7 @@ class DonorModel(Base):
     is_admin = Column(Boolean(), default=False)
     is_superuser = Column(Boolean(), default=False)
     created_on = Column(DateTime, default=datetime.datetime.now(datetime.UTC))
+    donated_on = Column(DateTime, default=datetime.datetime.now(datetime.UTC))
 
 
 class ProfileModel(Base):
