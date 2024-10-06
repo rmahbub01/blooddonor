@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from typing import Any, override
 
@@ -42,8 +43,22 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
         active_result = await db.execute(active_query)  # noqa
         active_count = active_result.scalar()
 
+        # new donors this month
+        this_month = datetime.datetime.now(datetime.UTC).replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        new_reg_query = select(func.count(DonorModel.id)).where(
+            DonorModel.created_on >= this_month
+        )
+        new_donors_result = await db.execute(new_reg_query)  # noqa
+        new_donors_count = new_donors_result.scalar()
+
         # Return both counts in a dictionary
-        return {"total_user_count": total_count, "active_user_count": active_count}
+        return {
+            "total_user_count": total_count,
+            "active_user_count": active_count,
+            "new_donors_this_month": new_donors_count,
+        }
 
     async def get_by_blood_group(
         self, db: Session, *, blood_group: str, skip: int = 0, limit: int = 100
