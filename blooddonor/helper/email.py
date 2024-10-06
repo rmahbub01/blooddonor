@@ -5,7 +5,7 @@ from typing import Any
 
 import emails
 from emails.template import JinjaTemplate
-from jose import jwt
+from jose import JWTError, jwt
 
 from blooddonor.core.config import settings
 
@@ -96,5 +96,5 @@ async def verify_password_reset_token(token: str) -> str | None:
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         return decoded_token["sub"]
-    except jwt.JWTError:
+    except JWTError:
         return None
