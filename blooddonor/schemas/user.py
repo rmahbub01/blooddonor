@@ -306,3 +306,16 @@ class ProfileResponse(UserProfile):
 
 class UpdateProfile(UserProfile):
     pass
+
+
+class DonorFilterSchema(BaseModel):
+    full_name: str | None = None
+    student_id: str | None = None
+    gender: GenderEnum | None = None
+    district: DistrictEnum | None = None
+    blood_group: BloodGroupEnum | None = None
+    studentship_status: StudentShipStatusEnum | None = None
+    department: DepartmentsEnum | None = None
+
+    class Config:
+        from_attributes = True
