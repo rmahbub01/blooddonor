@@ -56,11 +56,22 @@ class CRUDUser(
         new_donors_result = await db.execute(new_reg_query)  # noqa
         new_donors_count = new_donors_result.scalar()
 
+        # Calculate the percentage of each blood group
+        blood_group_query = select(DonorModel.blood_group, func.count(DonorModel.id)).group_by(DonorModel.blood_group)
+        blood_group_result = await db.execute(blood_group_query)  # noqa
+        blood_group_data = blood_group_result.all()
+
+        blood_group_percentages = {
+            blood_group: (count / total_count) * 100 if total_count > 0 else 0
+            for blood_group, count in blood_group_data
+        }
+
         # Return both counts in a dictionary
         return {
             "total_user_count": total_count,
             "active_user_count": active_count,
             "new_donors_this_month": new_donors_count,
+            "blood_group_percentages": blood_group_percentages
         }
 
     async def get_by_blood_group(
