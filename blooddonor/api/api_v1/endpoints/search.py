@@ -1,20 +1,14 @@
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends
 from sqlalchemy import and_
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
 from blooddonor.api import deps
-from blooddonor.crud.crud_utility import user
 from blooddonor.models.usermodel import DonorModel
 from blooddonor.schemas.user import (
-    BloodGroupEnum,
-    DepartmentsEnum,
-    DistrictEnum,
     DonorFilterSchema,
-    GenderEnum,
-    StudentShipStatusEnum,
     UserApi,
 )
 

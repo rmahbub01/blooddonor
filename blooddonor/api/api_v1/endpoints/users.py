@@ -66,7 +66,7 @@ async def create_user(
     current_user: DonorModel = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
-    Create new user.
+    Create new user (Need Super User privilege).
     """
     users = await user.get_by_mobile(db, mobile=user_in.mobile)
     if users:
@@ -85,6 +85,7 @@ async def delete_user(
     db: Session = Depends(deps.get_db),
     current_user: DonorModel = Depends(deps.get_current_active_superuser),
 ):
+    """Delete a user/donor by email (Need Super User privilege)"""
     donor = await user.get_by_email(db, email=email)
     if donor:
         await user.remove(db, id=donor.id)
