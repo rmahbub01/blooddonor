@@ -15,13 +15,12 @@ from blooddonor.schemas.user import (
     UserUpdateBase,
 )
 
-from ..core.config import settings
 from .base import CRUDBase
 
 
 # CRUD functionalities for Normal User models
 class CRUDUser(
-    CRUDBase[DonorModel, UserCreateBase, UserUpdateBase | UpdateBySuperUser]
+    CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]
 ):
     async def get_by_mobile(self, db: Session, mobile: str) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.mobile == mobile)
@@ -57,12 +56,14 @@ class CRUDUser(
         new_donors_count = new_donors_result.scalar()
 
         # Calculate the percentage of each blood group
-        blood_group_query = select(DonorModel.blood_group, func.count(DonorModel.id)).group_by(DonorModel.blood_group)
+        blood_group_query = select(
+            DonorModel.blood_group, func.count(DonorModel.id)
+        ).group_by(DonorModel.blood_group)
         blood_group_result = await db.execute(blood_group_query)  # noqa
         blood_group_data = blood_group_result.all()
 
         blood_group_percentages = {
-            blood_group: (count / total_count) * 100 if total_count > 0 else 0
+            blood_group: round((count / total_count), 2) * 100 if total_count > 0 else 0
             for blood_group, count in blood_group_data
         }
 
@@ -71,7 +72,7 @@ class CRUDUser(
             "total_user_count": total_count,
             "active_user_count": active_count,
             "new_donors_this_month": new_donors_count,
-            "blood_group_percentages": blood_group_percentages
+            "blood_group_percentages": blood_group_percentages,
         }
 
     async def get_by_blood_group(
@@ -196,7 +197,7 @@ class CRUDUser(
         self,
         db: Session,
         db_obj: DonorModel,
-        obj_in: UserUpdateBase | UpdateBySuperUser | dict[str, Any],
+        obj_in: UserUpdateBase | dict[str, Any],
     ) -> DonorModel:
         if isinstance(obj_in, dict):
             user_data = obj_in
