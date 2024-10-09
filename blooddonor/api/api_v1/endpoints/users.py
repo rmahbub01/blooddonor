@@ -35,6 +35,7 @@ from blooddonor.schemas.user import (
     GenderEnum,
     ProfileResponse,
     StudentShipStatusEnum,
+    UpdateBySuperUser,
     UpdateProfile,
     UserApi,
     UserCreateBase,
@@ -98,31 +99,12 @@ async def delete_user(
 async def update_user_me(
     *,
     db: Session = Depends(deps.get_db),
-    full_name: str | None = Body(None),
-    mobile: str | None = Body(None),
-    district: DistrictEnum | None = Body(None),
-    studentship_status: StudentShipStatusEnum | None = Body(None),
-    is_available: bool | None = Body(None),
-    password: str | None = Body(None),
+    user_in: UserUpdateBase,
     current_user: DonorModel = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update thyself.
     """
-    current_user_data = jsonable_encoder(current_user)
-    user_in = UserUpdateBase(**current_user_data)
-    if password is not None:
-        user_in.password = password
-    if full_name is not None:
-        user_in.full_name = full_name
-    if mobile is not None:
-        user_in.mobile = mobile
-    if district is not None:
-        user_in.district = district
-    if studentship_status is not None:
-        user_in.studentship_status = studentship_status
-    if is_available is not None:
-        user_in.is_available = is_available
     users = await user.update(db, db_obj=current_user, obj_in=user_in)
     return users
 
@@ -351,38 +333,18 @@ async def update_user_by_email(
     *,
     db: Session = Depends(deps.get_db),
     user_email: EmailStr,
-    full_name: str | None = Body(None),
-    mobile: str | None = Body(None),
-    district: DistrictEnum | None = Body(None),
-    studentship_status: StudentShipStatusEnum | None = Body(None),
-    is_available: bool | None = Body(None),
-    password: str | None = Body(None),
+    user_in: UpdateBySuperUser,
     current_user: DonorModel = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
-    Update a user.
+    Update a user (Super User Privilege needed).
     """
     user_ = await user.get_by_email(db, email=user_email)
-    user_in = UserUpdateBase(**jsonable_encoder(user_))
     if not user_in:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="The user does not exist in the system",
         )
-
-    if full_name is not None:
-        user_in.full_name = full_name
-    if mobile is not None:
-        user_in.mobile = mobile
-    if district is not None:
-        user_in.district = district
-    if studentship_status is not None:
-        user_in.studentship_status = studentship_status
-    if is_available is not None:
-        user_in.is_available = is_available
-    if password is not None:
-        user_in.password = password
-
     users = await user.update(db, db_obj=user_, obj_in=user_in)
     return users
 

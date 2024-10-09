@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from blooddonor.core import security
 from blooddonor.models.usermodel import DonorModel, ProfileModel
 from blooddonor.schemas.user import (
+    UpdateBySuperUser,
     UpdateProfile,
     UserCreateBase,
     UserProfile,
@@ -19,7 +20,9 @@ from .base import CRUDBase
 
 
 # CRUD functionalities for Normal User models
-class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
+class CRUDUser(
+    CRUDBase[DonorModel, UserCreateBase, UserUpdateBase | UpdateBySuperUser]
+):
     async def get_by_mobile(self, db: Session, mobile: str) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.mobile == mobile)
         result = await db.execute(query)  # noqa
@@ -179,7 +182,10 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
 
     @override
     async def update(
-        self, db: Session, db_obj: DonorModel, obj_in: UserUpdateBase | dict[str, Any]
+        self,
+        db: Session,
+        db_obj: DonorModel,
+        obj_in: UserUpdateBase | UpdateBySuperUser | dict[str, Any],
     ) -> DonorModel:
         if isinstance(obj_in, dict):
             user_data = obj_in
