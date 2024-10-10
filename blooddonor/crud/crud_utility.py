@@ -19,11 +19,16 @@ from .base import CRUDBase
 
 
 # CRUD functionalities for Normal User models
-class CRUDUser(
-    CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]
-):
+class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     async def get_by_mobile(self, db: Session, mobile: str) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.mobile == mobile)
+        result = await db.execute(query)  # noqa
+        return result.scalars().first()
+
+    async def get_by_student_id(
+        self, db: Session, student_id: str
+    ) -> DonorModel | None:
+        query = select(DonorModel).where(DonorModel.student_id == student_id)
         result = await db.execute(query)  # noqa
         return result.scalars().first()
 

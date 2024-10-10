@@ -68,11 +68,15 @@ async def create_user(
     """
     Create new user (Need Super User privilege).
     """
-    users = await user.get_by_mobile(db, mobile=user_in.mobile)
+    users = (
+        await user.get_by_mobile(db, mobile=user_in.mobile)
+        or await user.get_by_email(db, email=user_in.email)
+        or await user.get_by_student_id(db, student_id=user_in.student_id)
+    )
     if users:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="The user with this username already exists in the system.",
+            detail="The user with this mobile, email or student_id already exists in the system.",
         )
     users = await user.create(db, obj_in=user_in)
     return users
@@ -255,13 +259,15 @@ async def create_user_open(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Open user registration is forbidden on this server",
         )
-    users = await user.get_by_mobile(db, mobile=mobile) or await user.get_by_email(
-        db, email
+    users = (
+        await user.get_by_mobile(db, mobile=mobile)
+        or await user.get_by_email(db, email=email)
+        or await user.get_by_student_id(db, student_id=student_id)
     )
     if users:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="The user with this username or email already exists in the system",
+            detail=f"The user with this mobile, email or student_id already exists in the system",
         )
     user_in = UserCreateBase(
         full_name=full_name,

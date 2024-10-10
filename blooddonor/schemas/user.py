@@ -1,10 +1,13 @@
 import datetime
-import re
 import uuid
 from enum import Enum
 
-from fastapi import HTTPException, status
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field
+
+from blooddonor.schemas.validators import (
+    CommonFieldValidationMixin,
+    PasswordValidationMixin,
+)
 
 
 class GenderEnum(str, Enum):
@@ -175,7 +178,7 @@ class DepartmentsEnum(str, Enum):
 
 
 # User Schemas
-class UserBase(BaseModel):
+class UserBase(BaseModel, CommonFieldValidationMixin):
     # personal info
     full_name: str
     email: EmailStr
@@ -194,56 +197,8 @@ class UserBase(BaseModel):
     created_on: datetime.datetime | None = None
     donated_on: datetime.datetime | None = None
 
-    @field_validator("full_name")
-    def name_validator(cls, v):
-        if v is None or v.strip() == "":
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Name is not valid!",
-            )
-        return v
 
-    @field_validator("mobile")
-    def mobile_validator(cls, v):
-        mobile_regex = r"(?:\+88)?(01[\d]+)"
-        mobile = re.match(mobile_regex, v)
-        if mobile:
-            mobile = mobile.group(1)
-            if isinstance(int(mobile), int) and len(mobile) == 11:
-                return mobile
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The number format is invalid. Use numbers like 017xxxxxxxx",
-        )
-
-    @field_validator("department", mode="before")
-    def department_validator(cls, v):
-        if v in DepartmentsEnum:
-            return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The provided dept code doesn't match with any department.",
-        )
-
-    @field_validator("student_id")
-    def student_id_validator(cls, v, info):
-        v = str(v)
-        department = info.data.get("department")
-        student_id_regex = r"[1-9]{1}[\d]{1}[1-9]{1}[\d]{5}"
-        if (
-            (len(v) == 8)
-            and re.match(student_id_regex, v)
-            and (str(department.value) == v[2:5])
-            and (1 <= int(v[-3:]) <= 150)
-        ):
-            return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The student id is not valid or doesn't associated with respective department.",
-        )
-
-
-class UserCreateBase(UserBase):
+class UserCreateBase(UserBase, CommonFieldValidationMixin, PasswordValidationMixin):
     full_name: str
     email: EmailStr
     mobile: str
@@ -255,90 +210,15 @@ class UserCreateBase(UserBase):
     studentship_status: StudentShipStatusEnum
     password: str = Field(exclude=True)
 
-    @field_validator("full_name")
-    def name_validator(cls, v):
-        if v is None or v.strip() == "":
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Name is not valid!",
-            )
-        return v
 
-    @field_validator("mobile")
-    def mobile_validator(cls, v):
-        mobile_regex = r"(?:\+88)?(01[\d]+)"
-        mobile = re.match(mobile_regex, v)
-        if mobile:
-            mobile = mobile.group(1)
-            if isinstance(int(mobile), int) and len(mobile) == 11:
-                return mobile
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The number format is invalid. Use numbers like 017xxxxxxxx",
-        )
-
-    @field_validator("department", mode="before")
-    def department_validator(cls, v):
-        if v in DepartmentsEnum:
-            return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The provided dept code doesn't match with any department.",
-        )
-
-    @field_validator("student_id")
-    def student_id_validator(cls, v, info):
-        v = str(v)
-        department = info.data.get("department")
-        student_id_regex = r"[1-9]{1}[\d]{1}[1-9]{1}[\d]{5}"
-        if (
-            (len(v) == 8)
-            and re.match(student_id_regex, v)
-            and (str(department.value) == v[2:5])
-            and (1 <= int(v[-3:]) <= 150)
-        ):
-            return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The student id is not valid or doesn't associated with respective department.",
-        )
-
-    @field_validator("password")
-    def password_validator(cls, v):
-        if len(v) < 5:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Password must be equal or greater than 5 characters",
-            )
-        return v
-
-
-class UserUpdateBase(BaseModel):
+class UserUpdateBase(BaseModel, CommonFieldValidationMixin, PasswordValidationMixin):
     full_name: str | None = None
     district: DistrictEnum | None = None
     studentship_status: StudentShipStatusEnum | None = None
     password: str | None = Field(default=None, exclude=True)
 
-    @field_validator("full_name")
-    def name_validator(cls, v):
-        if v is None or v.strip() == "":
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Name is not valid!",
-            )
-        return v
 
-    @field_validator("password")
-    def password_validator(cls, v):
-        if len(v) < 5:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Password must be equal or greater than 5 characters",
-            )
-        return v
-
-
-class UpdateBySuperUser(BaseModel):
+class UpdateBySuperUser(UserBase, CommonFieldValidationMixin, PasswordValidationMixin):
     full_name: str | None = None
     email: EmailStr | None = None
     mobile: str | None = None
@@ -354,77 +234,11 @@ class UpdateBySuperUser(BaseModel):
     is_superuser: bool | None = False
     password: str | None = Field(exclude=True, default=None)
 
-    @field_validator("full_name")
-    def name_validator(cls, v):
-        if v is None or v.strip() == "":
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Name is not valid!",
-            )
-        return v
-
-    @field_validator("mobile")
-    def mobile_validator(cls, v):
-        mobile_regex = r"(?:\+88)?(01[\d]+)"
-        mobile = re.match(mobile_regex, v)
-        if mobile:
-            mobile = mobile.group(1)
-            if isinstance(int(mobile), int) and len(mobile) == 11:
-                return mobile
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The number format is invalid. Use numbers like 017xxxxxxxx",
-        )
-
-    @field_validator("department", mode="before")
-    def department_validator(cls, v):
-        if v in DepartmentsEnum:
-            return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The provided dept code doesn't match with any department.",
-        )
-
-    @field_validator("student_id")
-    def student_id_validator(cls, v, info):
-        v = str(v)
-        department = info.data.get("department")
-        student_id_regex = r"[1-9]{1}[\d]{1}[1-9]{1}[\d]{5}"
-        if (
-            (len(v) == 8)
-            and re.match(student_id_regex, v)
-            and (str(department.value) == v[2:5])
-            and (1 <= int(v[-3:]) <= 150)
-        ):
-            return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The student id is not valid or doesn't associated with respective department.",
-        )
-
-    @field_validator("password")
-    def password_validator(cls, v):
-        if len(v) < 5:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Password must be equal or greater than 5 characters",
-            )
-        return v
-
 
 # update user password schema
-class UserChangePassword(BaseModel):
+class UserChangePassword(BaseModel, PasswordValidationMixin):
     token: str
     password: str
-
-    @field_validator("password")
-    def password_validator(cls, v):
-        if len(v) < 5:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Password must be equal or greater than 5 characters",
-            )
-        return v
 
 
 class UserInDBBase(UserBase):
