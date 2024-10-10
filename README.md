@@ -293,3 +293,9 @@ Refer to the [interactive API docs](http://127.0.0.1:8000/docs) for a full list 
             2049-2050
             ...
         ```
+   - Employment Status Choices
+        ```
+           student
+           employed
+           unemployed
+        ```
