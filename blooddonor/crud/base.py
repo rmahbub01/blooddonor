@@ -2,7 +2,7 @@ import uuid
 from typing import Any
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select
+from sqlalchemy import asc, desc, select
 from sqlalchemy.orm import Session
 
 
@@ -22,10 +22,23 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
         return result.scalars().first()
 
     async def get_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 100
+        self,
+        db: Session,
+        *,
+        skip: int = 0,
+        limit: int = 100,
+        order_by: str = "created_on desc",
     ) -> list[ModelType]:
+        order_column_name, order_direction = order_by.split()
+        order_column = getattr(self.model, order_column_name)
+        order_expression = (
+            desc(order_column)
+            if order_direction.lower() == "desc"
+            else asc(order_column)
+        )
         query = (
             select(self.model)
+            .order_by(order_expression)
             .where(self.model.is_available == bool(True))
             .offset(skip)
             .limit(limit)
