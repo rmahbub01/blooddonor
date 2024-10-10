@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from blooddonor.core.config import settings
 from blooddonor.crud.crud_utility import user
@@ -33,7 +33,7 @@ async def init_db(db: Session) -> None:
             gender=settings.FIRST_SUPERUSER_GENDER,
             district=settings.FIRST_SUPERUSER_DISTRICT,
             blood_group=settings.FIRST_SUPERUSER_BLOOD_GROUP,
-            studentship_status=settings.FIRST_SUPERUSER_STUDENTSHIP_STATUS,
+            academic_year=settings.FIRST_SUPERUSER_ACADEMIC_YEAR,
             password=settings.FIRST_SUPERUSER_PASSWORD,
             is_superuser=True,
             is_admin=True,

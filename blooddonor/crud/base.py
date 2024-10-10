@@ -1,9 +1,9 @@
 import uuid
-from typing import Any
+from typing import Any, Sequence
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import asc, desc, select
-from sqlalchemy.orm import Session
+from sqlalchemy import Row, RowMapping, asc, desc, select
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 
 class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
@@ -18,7 +18,7 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
 
     async def get(self, db: Session, id: uuid.UUID) -> ModelType | None:
         query = select(self.model).where(self.model.id == id)
-        result = await db.execute(query)  # noqa
+        result = await db.execute(query)
         return result.scalars().first()
 
     async def get_multi(
@@ -28,7 +28,7 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
         skip: int = 0,
         limit: int = 100,
         order_by: str = "created_on desc",
-    ) -> list[ModelType]:
+    ) -> Sequence[Row[Any] | RowMapping | Any]:
         order_column_name, order_direction = order_by.split()
         order_column = getattr(self.model, order_column_name)
         order_expression = (
@@ -43,15 +43,15 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
             .offset(skip)
             .limit(limit)
         )
-        result = await db.execute(query)  # noqa
+        result = await db.execute(query)
         return result.scalars().all()
 
     async def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data)  # type: ignore
+        db_obj = self.model(**obj_in_data)
         db.add(db_obj)
-        await db.commit()  # noqa
-        await db.refresh(db_obj)  # noqa
+        await db.commit()
+        await db.refresh(db_obj)
         return db_obj
 
     async def update(
@@ -70,12 +70,12 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
         db.add(db_obj)
-        await db.commit()  # noqa
-        await db.refresh(db_obj)  # noqa
+        await db.commit()
+        await db.refresh(db_obj)
         return db_obj
 
     async def remove(self, db: Session, *, id: uuid.UUID) -> ModelType:
         query = await self.get(db, id)
-        await db.delete(query)  # noqa
-        await db.commit()  # noqa
+        await db.delete(query)
+        await db.commit()
         return query

@@ -1,11 +1,9 @@
 import datetime
 import logging
 
-from fastapi import Depends
 from sqlalchemy import update
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
-from blooddonor.api import deps
 from blooddonor.models.usermodel import DonorModel
 
 # Configure logging
@@ -23,7 +21,7 @@ async def update_donor_availability(db: Session):
         )
 
         # Perform a bulk update using a single query for efficiency
-        result = await db.execute(  # noqa
+        result = await db.execute(
             update(DonorModel)
             .where(DonorModel.donated_on < three_months_ago)
             .where(
@@ -33,14 +31,14 @@ async def update_donor_availability(db: Session):
         )
 
         # Commit the transaction to persist the changes
-        await db.commit()  # noqa
+        await db.commit()
 
         # Log the number of rows updated
         logger.info(f"Donor availability updated for {result.rowcount} donors.")
 
     except Exception as e:
-        await db.rollback()  # noqa
+        await db.rollback()
         logger.error(f"Error updating donor availability: {str(e)}")
         raise
     finally:
-        await db.close()  # noqa
+        await db.close()

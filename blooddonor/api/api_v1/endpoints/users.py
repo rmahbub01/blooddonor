@@ -14,7 +14,7 @@ from fastapi import (
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import FileResponse
 from pydantic.networks import EmailStr
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from blooddonor.api import deps
 from blooddonor.core.config import settings
@@ -29,12 +29,12 @@ from blooddonor.models.usermodel import DonorModel
 from blooddonor.schemas.msg import Msg
 from blooddonor.schemas.token import AccountVerifyToken
 from blooddonor.schemas.user import (
+    AcademicYearEnum,
     BloodGroupEnum,
     DepartmentsEnum,
     DistrictEnum,
     GenderEnum,
     ProfileResponse,
-    StudentShipStatusEnum,
     UpdateBySuperUser,
     UpdateProfile,
     UserApi,
@@ -176,7 +176,7 @@ async def create_user_open(
     gender: GenderEnum = Body(...),
     district: DistrictEnum = Body(...),
     blood_group: BloodGroupEnum = Body(...),
-    studentship_status: StudentShipStatusEnum = Body(...),
+    academic_year: AcademicYearEnum = Body(...),
     password: str = Body(...),
 ) -> Any:
     """
@@ -278,7 +278,7 @@ async def create_user_open(
         gender=gender,
         district=district,
         blood_group=blood_group,
-        studentship_status=studentship_status,
+        academic_year=academic_year,
         password=password,
     )
 
@@ -314,7 +314,7 @@ async def verify_account(
         )
     donor.is_active = True
     db.add(donor)
-    await db.commit()  # noqa
+    await db.commit()
     return Msg(msg="Account verification successful.")
 
 
@@ -369,7 +369,7 @@ async def upload_profile_img(
         await profile.update(
             db, db_obj=profile_data, obj_in=jsonable_encoder(profile_data)
         )
-    except:  # noqa
+    except HTTPException:
         raise HTTPException(
             status_code=status.WS_1011_INTERNAL_ERROR,
             detail="There is an error in the server. Pls try again.",

@@ -2,8 +2,8 @@ from typing import Any
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import and_
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 from sqlalchemy.future import select
-from sqlalchemy.orm import Session
 
 from blooddonor.api import deps
 from blooddonor.models.usermodel import DonorModel
@@ -40,10 +40,8 @@ async def filter_donors(
     if filters.blood_group:
         conditions.append(DonorModel.blood_group.in_([filters.blood_group.value]))
 
-    if filters.studentship_status:
-        conditions.append(
-            DonorModel.studentship_status.in_([filters.studentship_status.value])
-        )
+    if filters.academic_year:
+        conditions.append(DonorModel.academic_year.in_([filters.academic_year.value]))
 
     if filters.department:
         conditions.append(DonorModel.department.in_([filters.department.value]))

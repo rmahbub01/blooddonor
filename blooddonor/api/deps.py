@@ -4,8 +4,7 @@ from fastapi.security import OAuth2
 from fastapi.security.utils import get_authorization_scheme_param
 from jose import jwt
 from pydantic import ValidationError
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from blooddonor.core import security
 from blooddonor.core.config import settings
@@ -68,7 +67,7 @@ reusable_oauth2 = OAuth2PasswordBearerCookie(
 )
 
 
-async def get_db() -> AsyncSession:
+async def get_db() -> Session:
     try:
         async with SessionLocal() as session:
             yield session

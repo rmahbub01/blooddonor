@@ -3,12 +3,11 @@ import uuid
 from typing import Any, override
 
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from blooddonor.core import security
 from blooddonor.models.usermodel import DonorModel, ProfileModel
 from blooddonor.schemas.user import (
-    UpdateBySuperUser,
     UpdateProfile,
     UserCreateBase,
     UserProfile,
@@ -22,32 +21,32 @@ from .base import CRUDBase
 class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
     async def get_by_mobile(self, db: Session, mobile: str) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.mobile == mobile)
-        result = await db.execute(query)  # noqa
+        result = await db.execute(query)
         return result.scalars().first()
 
     async def get_by_student_id(
         self, db: Session, student_id: str
     ) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.student_id == student_id)
-        result = await db.execute(query)  # noqa
+        result = await db.execute(query)
         return result.scalars().first()
 
     async def get_by_email(self, db: Session, email: str) -> DonorModel | None:
         query = select(DonorModel).where(DonorModel.email == email)
-        result = await db.execute(query)  # noqa
+        result = await db.execute(query)
         return result.scalars().first()
 
     async def get_user_count(self, db: Session) -> dict | None:
         # Query for total users
         total_query = select(func.count(DonorModel.id))
-        total_result = await db.execute(total_query)  # noqa
+        total_result = await db.execute(total_query)
         total_count = total_result.scalar()
 
         # Query for active users
         active_query = select(func.count(DonorModel.id)).where(
             DonorModel.is_available == bool(True)
         )
-        active_result = await db.execute(active_query)  # noqa
+        active_result = await db.execute(active_query)
         active_count = active_result.scalar()
 
         # new donors this month
@@ -57,14 +56,14 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
         new_reg_query = select(func.count(DonorModel.id)).where(
             DonorModel.created_on >= this_month
         )
-        new_donors_result = await db.execute(new_reg_query)  # noqa
+        new_donors_result = await db.execute(new_reg_query)
         new_donors_count = new_donors_result.scalar()
 
         # Calculate the percentage of each blood group
         blood_group_query = select(
             DonorModel.blood_group, func.count(DonorModel.id)
         ).group_by(DonorModel.blood_group)
-        blood_group_result = await db.execute(blood_group_query)  # noqa
+        blood_group_result = await db.execute(blood_group_query)
         blood_group_data = blood_group_result.all()
 
         blood_group_percentages = {
@@ -80,121 +79,18 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             "blood_group_percentages": blood_group_percentages,
         }
 
-    async def get_by_blood_group(
-        self, db: Session, *, blood_group: str, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(
-                (self.model.blood_group == blood_group)
-                & (self.model.is_available == bool(True))
-            )
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
-    async def get_by_gender(
-        self, db: Session, *, gender: str, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(
-                (self.model.gender == gender) & (self.model.is_available == bool(True))
-            )
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
-    async def get_by_district(
-        self, db: Session, *, district: str, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(
-                (self.model.district == district)
-                & (self.model.is_available == bool(True))
-            )
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
-    async def get_by_studentship_status(
-        self, db: Session, *, studentship_status: str, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(
-                (self.model.studentship_status == studentship_status)
-                & (self.model.is_available == bool(True))
-            )
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
-    async def get_by_department(
-        self, db: Session, *, department: str, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(
-                (self.model.department == department)
-                & (self.model.is_available == bool(True))
-            )
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
-    async def get_by_student_id(
-        self, db: Session, *, student_id: str, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(
-                (self.model.student_id == student_id)
-                & (self.model.is_available == bool(True))
-            )
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
-    async def get_by_name(
-        self, db: Session, *, name: str, skip: int = 0, limit: int = 100
-    ) -> list[DonorModel]:
-        query = (
-            select(self.model)
-            .where(
-                (self.model.full_name.ilike(f"%{name}%"))
-                & (self.model.is_available == bool(True))
-            )
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await db.execute(query)  # noqa
-        return results.scalars().all()
-
     @override
     async def create(self, db: Session, obj_in: UserCreateBase) -> DonorModel | None:
         db_obj: DonorModel = DonorModel(**obj_in.model_dump(exclude_unset=True))  # noqa
         hashed_password = await security.get_password_hash(obj_in.password)
         db_obj.hashed_password = hashed_password
         # profile data
-        ProfileModel(donor=db_obj)  # noqa
+        profile_obj = ProfileModel(donor=db_obj)  # noqa
+        db.add(profile_obj)
         # adding user to database
         db.add(db_obj)
-        await db.commit()  # noqa
-        await db.refresh(db_obj)  # noqa
+        await db.commit()
+        await db.refresh(db_obj)
         return db_obj
 
     @override
@@ -242,7 +138,7 @@ class CRUDProfile(CRUDBase[ProfileModel, UserProfile, UpdateProfile]):
     @override
     async def get(self, db: Session, donor_id: uuid.UUID) -> ProfileModel | None:
         query = select(self.model).where(self.model.donor_id == donor_id)
-        result = await db.execute(query)  # noqa
+        result = await db.execute(query)
         return result.scalars().first()
 
 

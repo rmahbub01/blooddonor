@@ -68,7 +68,7 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
    FIRST_SUPERUSER_STUDENT_ID=<20204006, 20=admission year, 204=dept. code, 006=serial of student>
    FIRST_SUPERUSER_DISTRICT=dhaka
    FIRST_SUPERUSER_BLOOD_GROUP=<a+, a-, b+, b-, ab+, ab-, o+, o->
-   FIRST_SUPERUSER_STUDENTSHIP_STATUS=<1st, 2nd, 3rd, 4th, ms, unemployed, employed>
+   FIRST_SUPERUSER_ACADEMIC_YEAR=<2019-2020, 2022-2023 and so on>
    
    #use smtp for emailing
    SMTP_TLS=False
@@ -284,13 +284,12 @@ Refer to the [interactive API docs](http://127.0.0.1:8000/docs) for a full list 
             o+
             o-
         ```
-   - Studentship Status Choices
+   - Academic Year Choices
         ```
-            1st
-            2nd
-            3rd
-            4th
-            ms
-            unemployed
-            employed
+            2010-2011
+            2011-2013
+            ....
+            2048-2049
+            2049-2050
+            ...
         ```

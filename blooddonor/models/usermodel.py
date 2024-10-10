@@ -7,11 +7,12 @@ from sqlalchemy.orm import relationship
 
 from blooddonor.db.base_class import Base
 from blooddonor.schemas.user import (
+    AcademicYearEnum,
     BloodGroupEnum,
     DepartmentsEnum,
     DistrictEnum,
+    EmploymentStatusEnum,
     GenderEnum,
-    StudentShipStatusEnum,
 )
 
 
@@ -27,9 +28,7 @@ class DonorModel(Base):
     gender = Column(SQLEnum(GenderEnum), nullable=False, index=True)
     district = Column(SQLEnum(DistrictEnum), nullable=False, index=True)
     blood_group = Column(SQLEnum(BloodGroupEnum), nullable=False, index=True)
-    studentship_status = Column(
-        SQLEnum(StudentShipStatusEnum), nullable=False, index=True
-    )
+    academic_year = Column(SQLEnum(AcademicYearEnum), nullable=False, index=True)
     is_available = Column(Boolean(), default=True)
     # relationship
     profile = relationship(
@@ -57,6 +56,9 @@ class ProfileModel(Base):
     instagram = Column(String, nullable=True, default=None)
     linkedin = Column(String, nullable=True, default=None)
     website = Column(String, nullable=True, default=None)
+    employment_status = Column(
+        SQLEnum(EmploymentStatusEnum), nullable=True, default=None
+    )
     # relationship
     donor_id = Column(String, ForeignKey("donormodel.id", ondelete="SET NULL"))
     donor = relationship("DonorModel", back_populates="profile")

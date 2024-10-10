@@ -2,7 +2,8 @@ import datetime
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel, EmailStr, Field
+from fastapi import HTTPException, status
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from blooddonor.schemas.validators import (
     CommonFieldValidationMixin,
@@ -94,14 +95,47 @@ class BloodGroupEnum(str, Enum):
     O_NEGATIVE = "o-"
 
 
-class StudentShipStatusEnum(str, Enum):
-    FIRST_YEAR = "1st"
-    SECOND_YEAR = "2nd"
-    THIRD_YEAR = "3rd"
-    FOURTH_YEAR = "4th"
-    MASTERS = "ms"
-    UNEMPLOYED = "unemployed"
-    EMPLOYED = "employed"
+class AcademicYearEnum(str, Enum):
+    YEAR_2010_2011 = "2010-2011"
+    YEAR_2011_2012 = "2011-2012"
+    YEAR_2012_2013 = "2012-2013"
+    YEAR_2013_2014 = "2013-2014"
+    YEAR_2014_2015 = "2014-2015"
+    YEAR_2015_2016 = "2015-2016"
+    YEAR_2016_2017 = "2016-2017"
+    YEAR_2017_2018 = "2017-2018"
+    YEAR_2018_2019 = "2018-2019"
+    YEAR_2019_2020 = "2019-2020"
+    YEAR_2020_2021 = "2020-2021"
+    YEAR_2021_2022 = "2021-2022"
+    YEAR_2022_2023 = "2022-2023"
+    YEAR_2023_2024 = "2023-2024"
+    YEAR_2024_2025 = "2024-2025"
+    YEAR_2025_2026 = "2025-2026"
+    YEAR_2026_2027 = "2026-2027"
+    YEAR_2027_2028 = "2027-2028"
+    YEAR_2028_2029 = "2028-2029"
+    YEAR_2029_2030 = "2029-2030"
+    YEAR_2030_2031 = "2030-2031"
+    YEAR_2031_2032 = "2031-2032"
+    YEAR_2032_2033 = "2032-2033"
+    YEAR_2033_2034 = "2033-2034"
+    YEAR_2034_2035 = "2034-2035"
+    YEAR_2035_2036 = "2035-2036"
+    YEAR_2036_2037 = "2036-2037"
+    YEAR_2037_2038 = "2037-2038"
+    YEAR_2038_2039 = "2038-2039"
+    YEAR_2039_2040 = "2039-2040"
+    YEAR_2040_2041 = "2040-2041"
+    YEAR_2041_2042 = "2041-2042"
+    YEAR_2042_2043 = "2042-2043"
+    YEAR_2043_2044 = "2043-2044"
+    YEAR_2044_2045 = "2044-2045"
+    YEAR_2045_2046 = "2045-2046"
+    YEAR_2046_2047 = "2046-2047"
+    YEAR_2047_2048 = "2047-2048"
+    YEAR_2048_2049 = "2048-2049"
+    YEAR_2049_2050 = "2049-2050"
 
 
 class DepartmentsEnum(str, Enum):
@@ -177,6 +211,12 @@ class DepartmentsEnum(str, Enum):
     FISHERIES = "903"
 
 
+class EmploymentStatusEnum(str, Enum):
+    STUDENT = "student"
+    EMPLOYED = "employed"
+    UNEMPLOYED = "unemployed"
+
+
 # User Schemas
 class UserBase(BaseModel, CommonFieldValidationMixin):
     # personal info
@@ -188,7 +228,7 @@ class UserBase(BaseModel, CommonFieldValidationMixin):
     gender: GenderEnum
     district: DistrictEnum
     blood_group: BloodGroupEnum
-    studentship_status: StudentShipStatusEnum
+    academic_year: AcademicYearEnum
     is_available: bool = True
     # permission fields
     is_active: bool = True
@@ -207,14 +247,14 @@ class UserCreateBase(UserBase, CommonFieldValidationMixin, PasswordValidationMix
     gender: GenderEnum
     district: DistrictEnum
     blood_group: BloodGroupEnum
-    studentship_status: StudentShipStatusEnum
+    academic_year: AcademicYearEnum
     password: str = Field(exclude=True)
 
 
 class UserUpdateBase(BaseModel, CommonFieldValidationMixin, PasswordValidationMixin):
     full_name: str | None = None
     district: DistrictEnum | None = None
-    studentship_status: StudentShipStatusEnum | None = None
+    academic_year: AcademicYearEnum | None = None
     password: str | None = Field(default=None, exclude=True)
 
 
@@ -227,7 +267,7 @@ class UpdateBySuperUser(UserBase, CommonFieldValidationMixin, PasswordValidation
     gender: GenderEnum | None = None
     district: DistrictEnum | None = None
     blood_group: BloodGroupEnum | None = None
-    studentship_status: StudentShipStatusEnum | None = None
+    academic_year: AcademicYearEnum | None = None
     # permission fields
     is_active: bool | None = True
     is_admin: bool | None = False
@@ -263,6 +303,16 @@ class UserProfile(BaseModel):
     instagram: str | None = None
     linkedin: str | None = None
     website: str | None = None
+    employment_status: str | EmploymentStatusEnum = None
+
+    @field_validator("employment_status", check_fields=False)
+    def validate_employment_status(cls, v):
+        if v in EmploymentStatusEnum:
+            return v
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Please input one from these options: student, employed, unemployed",
+        )
 
 
 class ProfileResponse(UserProfile):
@@ -283,7 +333,7 @@ class DonorFilterSchema(BaseModel):
     gender: GenderEnum | None = None
     district: DistrictEnum | None = None
     blood_group: BloodGroupEnum | None = None
-    studentship_status: StudentShipStatusEnum | None = None
+    academic_year: AcademicYearEnum | None = None
     department: DepartmentsEnum | None = None
 
     class Config:

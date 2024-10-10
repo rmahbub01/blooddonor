@@ -67,7 +67,7 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_STUDENT_ID: str
     FIRST_SUPERUSER_DISTRICT: str
     FIRST_SUPERUSER_BLOOD_GROUP: str
-    FIRST_SUPERUSER_STUDENTSHIP_STATUS: str
+    FIRST_SUPERUSER_ACADEMIC_YEAR: str
     USERS_OPEN_REGISTRATION: bool = True
 
     # Automatics Documentations UI
