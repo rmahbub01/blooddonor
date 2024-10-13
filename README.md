@@ -25,7 +25,7 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 2. Create and activate a virtual environment:
 
     ```bash
-    python3 -m venv venv
+    python -m venv venv
     source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
 
