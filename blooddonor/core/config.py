@@ -66,9 +66,9 @@ class Settings(BaseSettings):
     def get_emails_enabled(cls, values: dict[str, Any]) -> dict[str, Any]:
         if (
             values.get("SMTP_TLS") is True
-            and values.get("SMTP_HOST") is True
-            and values.get("SMTP_PORT") is True
-            and values.get("EMAILS_FROM_EMAIL") is True
+            and values.get("SMTP_HOST")
+            and values.get("SMTP_PORT")
+            and values.get("EMAILS_FROM_EMAIL")
         ):
             values["EMAILS_ENABLED"] = True
         return values
