@@ -3,6 +3,8 @@ from enum import Enum
 
 from pydantic import field_validator
 
+from blooddonor.schemas.user import AcademicYearEnum
+
 
 class DepartmentsEnum(str, Enum):
     # Faculty of Arts and Humanities
@@ -99,6 +101,14 @@ class CommonFieldValidationMixin:
         if v in DepartmentsEnum:
             return v
         raise ValueError("The provided dept code doesn't match with any department.")
+
+    @field_validator("academic_year", check_fields=False)
+    def validate_department(cls, v):
+        if v in AcademicYearEnum:
+            return v
+        raise ValueError(
+            "The selected academic session doesn't match with listed sessions."
+        )
 
     @field_validator("student_id", check_fields=False)
     def validate_student_id(cls, v, info):
