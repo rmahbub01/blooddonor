@@ -1,7 +1,6 @@
 import re
 from enum import Enum
 
-from fastapi import HTTPException, status
 from pydantic import field_validator
 
 
@@ -82,10 +81,7 @@ class CommonFieldValidationMixin:
     @field_validator("full_name", check_fields=False)
     def validate_full_name(cls, v):
         if v is None or v.strip() == "":
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Name is not valid!",
-            )
+            raise ValueError("Name is not valid!")
         return v
 
     @field_validator("mobile", check_fields=False)
@@ -96,19 +92,13 @@ class CommonFieldValidationMixin:
             mobile = mobile.group(1)
             if isinstance(int(mobile), int) and len(mobile) == 11:
                 return mobile
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The number format is invalid. Use numbers like 017xxxxxxxx",
-        )
+        raise ValueError("The number format is invalid. Use numbers like 017xxxxxxxx")
 
     @field_validator("department", mode="before", check_fields=False)
     def validate_department(cls, v):
         if v in DepartmentsEnum:
             return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The provided dept code doesn't match with any department.",
-        )
+        raise ValueError("The provided dept code doesn't match with any department.")
 
     @field_validator("student_id", check_fields=False)
     def validate_student_id(cls, v, info):
@@ -122,9 +112,8 @@ class CommonFieldValidationMixin:
             and (1 <= int(v[-3:]) <= 150)
         ):
             return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="The student id is not valid or doesn't associate with the respective department.",
+        raise ValueError(
+            "The student id is not valid or doesn't associate with the respective department"
         )
 
 
@@ -132,8 +121,5 @@ class PasswordValidationMixin:
     @field_validator("password", check_fields=False)
     def password_validator(cls, v):
         if len(v) < 5:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Password must be equal or greater than 5 characters",
-            )
+            raise ValueError("Password must be equal or greater than 5 characters")
         return v

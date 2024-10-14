@@ -309,9 +309,8 @@ class UserProfile(BaseModel):
     def validate_employment_status(cls, v):
         if v in EmploymentStatusEnum:
             return v
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Please input one from these options: student, employed, unemployed",
+        raise ValueError(
+            "Please input one from these options: student, employed, unemployed"
         )
 
 
