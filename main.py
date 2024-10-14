@@ -61,10 +61,11 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
 
 app.mount("/static", StaticFiles(directory="./blooddonor/static"), name="static")
 # Set all CORS enabled origins
-if settings.BACKEND_CORS_ORIGINS:
+# Set all CORS enabled origins
+if settings.all_cors_origins:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_origins=settings.all_cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

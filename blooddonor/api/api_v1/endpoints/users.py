@@ -54,6 +54,7 @@ async def read_users(
     """
     Retrieve users.
     """
+    print(settings.all_cors_origins)
     users = await user.get_multi(db, skip=skip, limit=limit, order_by="created_on desc")
     return users
 

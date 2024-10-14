@@ -52,8 +52,7 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
    # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
    # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
    # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
-   BACKEND_CORS_ORIGINS=["http://127.0.0.1:8000", "http://localtest.me", "http://localhost:5367", "http://localhost"]
-   
+   BACKEND_CORS_ORIGINS=["http://127.0.0.1:8000", "http://localtest.me:8000", "http://localhost:5367", "http://localhost:8000", "http://localhost"]
    # secret key use only in productions
    # Change this key using openssl rand -hex 32 in production
    SECRET_KEY=e7349af4f2d09ec73a820455615fafae531a36b22eb16553060d0fc4be7fc02e

@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     def all_cors_origins(self) -> list[str]:
         cors = [str(origin).rstrip("/").strip() for origin in self.BACKEND_CORS_ORIGINS]
         if self.FRONTEND_HOST:
-            cors.append(self.FRONTEND_HOST)
+            cors.append(str(self.FRONTEND_HOST).rstrip("/"))
         return cors
 
     PROJECT_NAME: str
