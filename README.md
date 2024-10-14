@@ -50,7 +50,7 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 ```python
    PROJECT_NAME=BloodDonor
    SERVER_NAME=http://127.0.0.1:8000
-   SERVER_HOST=http://localtest.me
+   SERVER_HOST=http://localtest.me:8000
    # Change the url to your frontend url
    FRONTEND_HOST=http://localhost:5367
    
