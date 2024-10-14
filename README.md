@@ -25,14 +25,19 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 2. Create and activate a virtual environment:
 
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    python -m venv venv # Windows
+    source venv\Scripts\activate # Windows
+   
+    python3 -m venv venv # Linux and Mac
+    source venv/bin/activate  # Linux and Mac
+    
     ```
 
 3. Install the dependencies:
 
     ```bash
-    pip install -r requirements.txt
+    pip install -r requirements.txt # Windows
+    pip3 install -r requirements.txt # Linux and Mac
     ```
 
 4. Rename ```.env.example``` file to ```.env```
@@ -90,7 +95,8 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 
 00. Create First Super User
     ```bash
-    python initial_data.py
+    python initial_data.py # Windows
+    python3 initial_data.py # Linux and Mac
     ```
 
 1. Run the FastAPI server:
