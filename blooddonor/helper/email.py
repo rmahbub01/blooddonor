@@ -41,7 +41,7 @@ async def send_reset_password_email(username: str, email: str, token: str) -> No
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "reset_password.html") as f:
         template_str = f.read()
 
-    server_host = settings.SERVER_HOST
+    server_host = settings.FRONTEND_HOST
     link = f"{server_host}{settings.API_V1_STR[1:]}/reset-password?token={token}"
     await send_email(
         email_to=email,
@@ -63,7 +63,7 @@ async def send_new_account_email(username: str, email: str, token: str) -> None:
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "account_verification.html") as f:
         template_str = f.read()
 
-    server_host = settings.SERVER_HOST
+    server_host = settings.FRONTEND_HOST
     link = f"{server_host}{settings.API_V1_STR[1:]}/verify-account?token={token}"
     await send_email(
         email_to=email,

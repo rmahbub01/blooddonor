@@ -2,7 +2,13 @@ import secrets
 from pathlib import Path
 from typing import Any
 
-from pydantic import AnyHttpUrl, EmailStr, field_validator, model_validator
+from pydantic import (
+    AnyHttpUrl,
+    EmailStr,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 from pydantic_settings import BaseSettings
 
 
@@ -13,6 +19,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: str = "127.0.0.1"
     SERVER_HOST: AnyHttpUrl
+    FRONTEND_HOST: AnyHttpUrl | None = None
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
@@ -21,10 +28,18 @@ class Settings(BaseSettings):
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: str | list[str]) -> list[str] | str:
         if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
+            return [i.rstrip("/").strip() for i in v.split(",")]
         elif isinstance(v, (list, str)):
             return v
         raise ValueError(f"Invalid value for BACKEND_CORS_ORIGINS: {v}")
+
+    @computed_field
+    @property
+    def all_cors_origins(self) -> list[str]:
+        cors = [str(origin).rstrip("/").strip() for origin in self.BACKEND_CORS_ORIGINS]
+        if self.FRONTEND_HOST:
+            cors.append(self.FRONTEND_HOST)
+        return cors
 
     PROJECT_NAME: str
 

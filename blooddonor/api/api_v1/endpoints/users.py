@@ -282,7 +282,6 @@ async def create_user_open(
         password=password,
     )
 
-    users = await user.create(db, obj_in=user_in)
     if settings.EMAILS_ENABLED and user_in.email:
         user_in.is_active = False
         # email will be sent in the background
@@ -293,7 +292,7 @@ async def create_user_open(
             email=user_in.email,
             token=password_reset_token,
         )
-
+    users = await user.create(db, obj_in=user_in)
     return users
 
 

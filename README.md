@@ -44,13 +44,15 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 
 ```python
    PROJECT_NAME=BloodDonor
-   SERVER_NAME=127.0.0.1:8000
-   SERVER_HOST=https://localtest.me
+   SERVER_NAME=http://127.0.0.1:8000
+   SERVER_HOST=http://localtest.me
+   # Change the url to your frontend url
+   FRONTEND_HOST=http://localhost:5367
    
    # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
    # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
    # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
-   BACKEND_CORS_ORIGINS=[]
+   BACKEND_CORS_ORIGINS=["http://127.0.0.1:8000", "http://localtest.me", "http://localhost:5367", "http://localhost"]
    
    # secret key use only in productions
    # Change this key using openssl rand -hex 32 in production
