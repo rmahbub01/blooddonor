@@ -293,7 +293,7 @@ async def create_user_open(
             token=password_reset_token,
         )
     users = await user.create(db, obj_in=user_in)
-    return users
+    return Msg(msg="Account has been created")
 
 
 @router.post("/verify-account")
