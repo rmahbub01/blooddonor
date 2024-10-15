@@ -58,8 +58,8 @@ async def read_users(
     return users
 
 
-@router.post("/create_user", response_model=UserApi)
-async def create_user(
+@router.post("/create_user_by_superuser", response_model=UserApi)
+async def create_user_by_superuser(
     *,
     db: Session = Depends(deps.get_db),
     user_in: UserCreateBase,
@@ -161,10 +161,10 @@ async def update_profile(
 
 
 @router.post(
-    "/create_user_open",
+    "/create_user",
     response_model=Msg,
 )
-async def create_user_open(
+async def create_user(
     *,
     background_tasks: BackgroundTasks,
     db: Session = Depends(deps.get_db),
