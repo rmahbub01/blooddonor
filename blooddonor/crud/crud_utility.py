@@ -2,6 +2,7 @@ import datetime
 import uuid
 from typing import Any, override
 
+from pydantic import EmailStr
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 
@@ -113,9 +114,12 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
         return await super().update(db, db_obj=db_obj, obj_in=user_data)
 
     async def authenticate(
-        self, db: Session, *, mobile: str, password: str
+        self, db: Session, *, mobile: str = None, email: EmailStr = None, password: str
     ) -> DonorModel | None:
-        users = await self.get_by_mobile(db, mobile=mobile)
+        if mobile:
+            users = await self.get_by_mobile(db, mobile=mobile)
+        else:
+            users = await self.get_by_email(db, email=email)
 
         if not users:
             return None

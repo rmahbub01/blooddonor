@@ -12,6 +12,7 @@ from fastapi import (
     status,
 )
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from blooddonor.api import deps
@@ -42,15 +43,28 @@ async def login_access_token(
     OAuth2 compatible token login, get an access token for future requests
     """
     mobile_regex = r"(?:\+88)?(01[\d]+)"
+    email = form_data.username
     mobile = re.match(mobile_regex, form_data.username)
     if mobile:
         mobile = mobile.group(1)
+        users = await user.authenticate(db, mobile=mobile, password=form_data.password)
+    elif email:
+        try:
+            email = EmailStr._validate(form_data.username)  # noqa
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Email is invalid.",
+            )
+        finally:
+            users = await user.authenticate(
+                db, email=email, password=form_data.password
+            )
     else:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Mobile number you provided is invalid.",
         )
-    users = await user.authenticate(db, mobile=mobile, password=form_data.password)
     if not users:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not await user.is_active(users):
