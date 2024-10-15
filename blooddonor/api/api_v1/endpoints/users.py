@@ -162,7 +162,7 @@ async def update_profile(
 
 @router.post(
     "/create_user_open",
-    response_model=UserApi,
+    response_model=Msg,
 )
 async def create_user_open(
     *,
