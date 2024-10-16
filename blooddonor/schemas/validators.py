@@ -29,16 +29,6 @@ class CommonFieldValidationMixin:
             return v
         raise ValueError("The provided dept code doesn't match with any department.")
 
-    @field_validator("academic_year", check_fields=False)
-    def validate_department(cls, v):
-        from blooddonor.schemas.user import AcademicYearEnum
-
-        if v in AcademicYearEnum:
-            return v
-        raise ValueError(
-            "The selected academic session doesn't match with listed sessions."
-        )
-
     @field_validator("student_id", check_fields=False)
     def validate_student_id(cls, v, info):
         v = str(v)
@@ -54,6 +44,15 @@ class CommonFieldValidationMixin:
         raise ValueError(
             "The student id is not valid or doesn't associate with the respective department"
         )
+
+    @field_validator("academic_year", check_fields=False)
+    def validate_department(cls, v, info):
+        from blooddonor.schemas.user import AcademicYearEnum
+
+        student_id = info.data.get("student_id")
+        if v in AcademicYearEnum and student_id[:2] == v[-2:]:
+            return v
+        raise ValueError("Your session is not valid.")
 
 
 class PasswordValidationMixin:
