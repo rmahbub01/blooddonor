@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -44,13 +45,29 @@ app = FastAPI(
 )
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = exc.errors()
+    formatted_errors = []
+    for error in errors:
+        print(error)
+        formatted_errors.append(
+            {"field": error["loc"][-1], "message": str(error["ctx"]["error"])}
+        )
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": formatted_errors},
+    )
+
+
 @app.exception_handler(ValidationError)
 async def validation_exception_handler(request: Request, exc: ValidationError):
     errors = exc.errors()
     formatted_errors = []
     for error in errors:
         formatted_errors.append(
-            {"field": ".".join(map(str, error["loc"])), "message": error["msg"]}
+            {"field": error["loc"][-1], "message": str(error["ctx"]["error"])}
         )
 
     return JSONResponse(

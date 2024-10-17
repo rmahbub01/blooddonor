@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from blooddonor.api import deps
 from blooddonor.core.config import settings
+from blooddonor.core.security import verify_password
 from blooddonor.crud.crud_utility import profile, user
 from blooddonor.helper.email import (
     generate_password_reset_token,
@@ -110,8 +111,14 @@ async def update_user_me(
     """
     Update thyself.
     """
-    users = await user.update(db, db_obj=current_user, obj_in=user_in)
-    return users
+    if user_in.password and await verify_password(
+        user_in.password, current_user.hashed_password
+    ):
+        users = await user.update(db, db_obj=current_user, obj_in=user_in)
+        return users
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Password doesn't match!"
+    )
 
 
 @router.get("/me", response_model=UserApi)

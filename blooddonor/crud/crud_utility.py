@@ -111,6 +111,9 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
             )
             del user_data["password"]
             user_data["hashed_password"] = hashed_password
+        if "profile" in user_data and isinstance(user_data["profile"], dict):
+            profile_data = {key: str(val) for key, val in user_data["profile"].items()}
+            user_data["profile"] = ProfileModel(**profile_data)  # noqa
         return await super().update(db, db_obj=db_obj, obj_in=user_data)
 
     async def authenticate(

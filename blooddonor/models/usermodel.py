@@ -36,6 +36,7 @@ class DonorModel(Base):
         back_populates="donor",
         uselist=False,
         cascade="all, delete-orphan",
+        lazy="selectin",
     )
 
     # credentials
@@ -57,7 +58,7 @@ class ProfileModel(Base):
     linkedin = Column(String, nullable=True, default=None)
     website = Column(String, nullable=True, default=None)
     employment_status = Column(
-        SQLEnum(EmploymentStatusEnum), nullable=True, default=None
+        SQLEnum(EmploymentStatusEnum), default=EmploymentStatusEnum.STUDENT
     )
     # relationship
     donor_id = Column(String, ForeignKey("donormodel.id", ondelete="SET NULL"))

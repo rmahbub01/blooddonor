@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import uuid
 from enum import Enum
@@ -229,6 +231,8 @@ class UserBase(BaseModel, CommonFieldValidationMixin):
     blood_group: BloodGroupEnum
     academic_year: AcademicYearEnum
     is_available: bool = True
+    # profile
+    profile: ProfileResponse | None = None
     # permission fields
     is_active: bool = True
     is_admin: bool = False
@@ -254,7 +258,7 @@ class UserUpdateBase(BaseModel, CommonFieldValidationMixin, PasswordValidationMi
     full_name: str | None = None
     blood_group: BloodGroupEnum | None = None
     district: DistrictEnum | None = None
-    password: str | None = Field(default=None, exclude=True)
+    password: str = Field(default=None, exclude=True)
 
 
 class UpdateBySuperUser(UserBase, CommonFieldValidationMixin, PasswordValidationMixin):

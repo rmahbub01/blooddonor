@@ -4,6 +4,7 @@ from typing import Any, Sequence
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import Row, RowMapping, asc, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession as Session
+from sqlalchemy.orm import joinedload
 
 
 class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
@@ -17,7 +18,11 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
         self.model = model
 
     async def get(self, db: Session, id: uuid.UUID) -> ModelType | None:
-        query = select(self.model).where(self.model.id == id)
+        query = (
+            select(self.model)
+            .options(joinedload(self.model.profile))
+            .where(self.model.id == id)
+        )
         result = await db.execute(query)
         return result.scalars().first()
 
@@ -38,6 +43,7 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
         )
         query = (
             select(self.model)
+            .options(joinedload(self.model.profile))
             .order_by(order_expression)
             .where(self.model.is_available == bool(True))
             .offset(skip)
