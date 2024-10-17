@@ -50,9 +50,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     errors = exc.errors()
     formatted_errors = []
     for error in errors:
-        print(error)
         formatted_errors.append(
-            {"field": error["loc"][-1], "message": str(error["ctx"]["error"])}
+            {
+                "field": error["loc"][-1],
+                "message": error.get("msg"),
+            }
         )
 
     return JSONResponse(
@@ -67,7 +69,10 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
     formatted_errors = []
     for error in errors:
         formatted_errors.append(
-            {"field": error["loc"][-1], "message": str(error["ctx"]["error"])}
+            {
+                "field": error["loc"][-1],
+                "message": error.get("msg"),
+            }
         )
 
     return JSONResponse(
