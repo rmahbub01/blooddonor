@@ -2,7 +2,6 @@ import datetime
 import uuid
 from enum import Enum
 
-from fastapi import HTTPException, status
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from blooddonor.schemas.validators import (
@@ -253,8 +252,8 @@ class UserCreateBase(UserBase, CommonFieldValidationMixin, PasswordValidationMix
 
 class UserUpdateBase(BaseModel, CommonFieldValidationMixin, PasswordValidationMixin):
     full_name: str | None = None
+    blood_group: BloodGroupEnum | None = None
     district: DistrictEnum | None = None
-    academic_year: AcademicYearEnum | None = None
     password: str | None = Field(default=None, exclude=True)
 
 
