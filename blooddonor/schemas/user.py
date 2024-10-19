@@ -4,7 +4,7 @@ import datetime
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from blooddonor.schemas.validators import (
     CommonFieldValidationMixin,
@@ -286,9 +286,7 @@ class UserChangePassword(BaseModel, PasswordValidationMixin):
 
 class UserInDBBase(UserBase):
     id: uuid.UUID | None = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # for additional info returned by api
@@ -320,9 +318,7 @@ class UserProfile(BaseModel):
 class ProfileResponse(UserProfile):
     id: uuid.UUID | None = None
     donor_id: uuid.UUID | None = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UpdateProfile(UserProfile):
@@ -337,6 +333,4 @@ class DonorFilterSchema(BaseModel):
     blood_group: BloodGroupEnum | None = None
     academic_year: AcademicYearEnum | None = None
     department: DepartmentsEnum | None = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

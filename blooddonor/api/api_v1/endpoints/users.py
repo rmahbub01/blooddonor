@@ -286,7 +286,7 @@ async def create_user(
     if users:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"The user with this mobile, email or student_id already exists in the system",
+            detail="The user with this mobile, email or student_id already exists in the system",
         )
 
     if settings.EMAILS_ENABLED and user_in.email:

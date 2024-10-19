@@ -46,7 +46,9 @@ app = FastAPI(
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler_fastapi(
+    request: Request, exc: RequestValidationError
+):
     errors = exc.errors()
     formatted_errors = []
     for error in errors:
@@ -64,7 +66,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 @app.exception_handler(ValidationError)
-async def validation_exception_handler(request: Request, exc: ValidationError):
+async def validation_exception_handler_pydantic(request: Request, exc: ValidationError):
     errors = exc.errors()
     formatted_errors = []
     for error in errors:

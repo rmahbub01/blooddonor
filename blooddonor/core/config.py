@@ -9,7 +9,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -89,11 +89,9 @@ class Settings(BaseSettings):
     # Automatics Documentations UI
     DOCS_URL: str | None = "/docs"
     REDOC_URL: str | None = "/redoc"
-
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(
+        case_sensitive=True, env_file=".env", env_file_encoding="utf-8"
+    )
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
