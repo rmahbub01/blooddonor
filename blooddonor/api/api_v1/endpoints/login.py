@@ -76,23 +76,11 @@ async def login_access_token(
     access_token = await security.create_access_token(
         users.id, expires_delta=access_token_expires
     )
-    response.set_cookie(
-        key="Authorization",
-        value=f"Bearer {access_token}",
-        domain=str(settings.SERVER_HOST).split("/")[-1],
-        httponly=True,
-        expires=access_token_expires,  # type: ignore
-    )
+
     return {
         "access_token": access_token,
         "token_type": "bearer",
     }
-
-
-@router.get("/logout")
-async def logout(response: Response):
-    response.delete_cookie("Authorization")
-    return {"success": "User logged out successfully."}
 
 
 @router.post("/password-recovery/{email}", response_model=Msg)
