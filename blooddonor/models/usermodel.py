@@ -2,7 +2,7 @@ import datetime
 import uuid
 from uuid import UUID
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from blooddonor.db.base_class import Base
@@ -17,7 +17,9 @@ from blooddonor.schemas.user import (
 
 
 class DonorModel(Base):
-    id: Mapped[UUID] = mapped_column(default=uuid.uuid4, primary_key=True)
+    id: Mapped[UUID] = mapped_column(
+        String, default=lambda: str(uuid.uuid4()), primary_key=True
+    )
 
     # personal details
     full_name: Mapped[str] = mapped_column(nullable=False, index=True)
@@ -55,7 +57,9 @@ class DonorModel(Base):
 
 
 class ProfileModel(Base):
-    id: Mapped[UUID] = mapped_column(default=uuid.uuid4, primary_key=True)
+    id: Mapped[UUID] = mapped_column(
+        String, default=lambda: str(uuid.uuid4()), primary_key=True
+    )
     profile_img: Mapped[str] = mapped_column(nullable=True, default="profile_img.png")
     facebook: Mapped[str] = mapped_column(nullable=True, default=None)
     instagram: Mapped[str] = mapped_column(nullable=True, default=None)
