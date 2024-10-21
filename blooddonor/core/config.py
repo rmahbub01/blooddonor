@@ -1,5 +1,4 @@
 import secrets
-from pathlib import Path
 from typing import Any
 
 from pydantic import (
@@ -94,5 +93,4 @@ class Settings(BaseSettings):
     )
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
 settings = Settings()
