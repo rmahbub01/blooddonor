@@ -1,9 +1,9 @@
 import datetime
 import uuid
+from uuid import UUID
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String
-from sqlalchemy import Enum as SQLEnum
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from blooddonor.db.base_class import Base
 from blooddonor.schemas.user import (
@@ -17,49 +17,55 @@ from blooddonor.schemas.user import (
 
 
 class DonorModel(Base):
-    id = Column(String, default=lambda: str(uuid.uuid4()), primary_key=True)
+    id: Mapped[UUID] = mapped_column(default=uuid.uuid4, primary_key=True)
 
     # personal details
-    full_name = Column(String, nullable=False, index=True)
-    email = Column(String, index=True, default=None, unique=True)
-    mobile = Column(String, unique=True, index=True, nullable=False)
-    department = Column(SQLEnum(DepartmentsEnum), index=True, nullable=False)
-    student_id = Column(String, unique=True, nullable=False, index=True)
-    gender = Column(SQLEnum(GenderEnum), nullable=False, index=True)
-    district = Column(SQLEnum(DistrictEnum), nullable=False, index=True)
-    blood_group = Column(SQLEnum(BloodGroupEnum), nullable=False, index=True)
-    academic_year = Column(SQLEnum(AcademicYearEnum), nullable=False, index=True)
-    is_available = Column(Boolean(), default=True)
+    full_name: Mapped[str] = mapped_column(nullable=False, index=True)
+    email: Mapped[str] = mapped_column(index=True, default=None, unique=True)
+    mobile: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
+    department: Mapped[DepartmentsEnum] = mapped_column(index=True, nullable=False)
+    student_id: Mapped[str] = mapped_column(unique=True, nullable=False, index=True)
+    gender: Mapped[GenderEnum] = mapped_column(nullable=False, index=True)
+    district: Mapped[DistrictEnum] = mapped_column(nullable=False, index=True)
+    blood_group: Mapped[BloodGroupEnum] = mapped_column(nullable=False, index=True)
+    academic_year: Mapped[AcademicYearEnum] = mapped_column(nullable=False, index=True)
+    is_available: Mapped[bool] = mapped_column(default=True)
     # relationship
-    profile = relationship(
+    profile: Mapped["ProfileModel"] = relationship(
         "ProfileModel",
         back_populates="donor",
         uselist=False,
-        cascade="all, delete-orphan",
+        cascade="all, delete",
         lazy="selectin",
     )
 
     # credentials
-    hashed_password = Column(String, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(nullable=False)
 
     # permissions
-    is_active = Column(Boolean(), default=True)
-    is_admin = Column(Boolean(), default=False)
-    is_superuser = Column(Boolean(), default=False)
-    created_on = Column(DateTime, default=datetime.datetime.now(datetime.UTC))
-    donated_on = Column(DateTime, default=datetime.datetime.now(datetime.UTC))
+    is_active: Mapped[bool] = mapped_column(default=True)
+    is_admin: Mapped[bool] = mapped_column(default=False)
+    is_superuser: Mapped[bool] = mapped_column(default=False)
+    created_on: Mapped[datetime.datetime] = mapped_column(
+        default=datetime.datetime.now(datetime.UTC)
+    )
+    donated_on: Mapped[datetime.datetime] = mapped_column(
+        default=datetime.datetime.now(datetime.UTC)
+    )
 
 
 class ProfileModel(Base):
-    id = Column(String, default=lambda: str(uuid.uuid4()), primary_key=True)
-    profile_img = Column(String, nullable=True, default="profile_img.png")
-    facebook = Column(String, nullable=True, default=None)
-    instagram = Column(String, nullable=True, default=None)
-    linkedin = Column(String, nullable=True, default=None)
-    website = Column(String, nullable=True, default=None)
-    employment_status = Column(
-        SQLEnum(EmploymentStatusEnum), default=EmploymentStatusEnum.STUDENT
+    id: Mapped[UUID] = mapped_column(default=uuid.uuid4, primary_key=True)
+    profile_img: Mapped[str] = mapped_column(nullable=True, default="profile_img.png")
+    facebook: Mapped[str] = mapped_column(nullable=True, default=None)
+    instagram: Mapped[str] = mapped_column(nullable=True, default=None)
+    linkedin: Mapped[str] = mapped_column(nullable=True, default=None)
+    website: Mapped[str] = mapped_column(nullable=True, default=None)
+    employment_status: Mapped[EmploymentStatusEnum] = mapped_column(
+        default=EmploymentStatusEnum.STUDENT
     )
     # relationship
-    donor_id = Column(String, ForeignKey("donormodel.id", ondelete="SET NULL"))
-    donor = relationship("DonorModel", back_populates="profile")
+    donor_id: Mapped[UUID] = mapped_column(
+        ForeignKey("donormodel.id", ondelete="CASCADE")
+    )
+    donor: Mapped["DonorModel"] = relationship("DonorModel", back_populates="profile")

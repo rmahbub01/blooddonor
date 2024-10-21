@@ -1,4 +1,4 @@
-from typing import Any
+from uuid import UUID
 
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import as_declarative, declared_attr
 @as_declarative()
 class Base:
     metadata = None
-    id: Any
+    id: UUID
     __name__: str
 
     # Generate table name automatically
