@@ -1,10 +1,9 @@
 import datetime
 import logging
 
+from blooddonor.models.usermodel import DonorModel
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession as Session
-
-from blooddonor.models.usermodel import DonorModel
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

@@ -1,6 +1,5 @@
-from fastapi import APIRouter
-
 from blooddonor.api.api_v1.endpoints import login, search, users, utils
+from fastapi import APIRouter
 
 api_router = APIRouter()
 

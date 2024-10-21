@@ -1,16 +1,15 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
-from jose.exceptions import JWTError
-from pydantic import ValidationError
-from sqlalchemy.ext.asyncio import AsyncSession as Session
-
 from blooddonor.core import security
 from blooddonor.core.config import settings
 from blooddonor.crud.crud_utility import user
 from blooddonor.db.session import SessionLocal
 from blooddonor.models.usermodel import DonorModel
 from blooddonor.schemas.token import TokenPayload
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt
+from jose.exceptions import JWTError
+from pydantic import ValidationError
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"

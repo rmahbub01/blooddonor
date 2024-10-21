@@ -4,12 +4,11 @@ import datetime
 import uuid
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
-
 from blooddonor.schemas.validators import (
     CommonFieldValidationMixin,
     PasswordValidationMixin,
 )
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class GenderEnum(str, Enum):

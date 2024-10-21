@@ -1,10 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession as Session
-
 from blooddonor.core.config import settings
 from blooddonor.crud.crud_utility import user
 from blooddonor.db.base import Base
 from blooddonor.db.session import engine
 from blooddonor.schemas.user import UserCreateBase
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
 # otherwise, SQL Alchemy might fail to initialize relationships properly
