@@ -2,6 +2,20 @@ import datetime
 import os
 from typing import Any
 
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Body,
+    Depends,
+    HTTPException,
+    UploadFile,
+    status,
+)
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import FileResponse
+from pydantic.networks import EmailStr
+from sqlalchemy.ext.asyncio import AsyncSession as Session
+
 from blooddonor.api import deps
 from blooddonor.core.config import settings
 from blooddonor.core.security import verify_password
@@ -28,19 +42,6 @@ from blooddonor.schemas.user import (
     UserCreateBase,
     UserUpdateBase,
 )
-from fastapi import (
-    APIRouter,
-    BackgroundTasks,
-    Body,
-    Depends,
-    HTTPException,
-    UploadFile,
-    status,
-)
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import FileResponse
-from pydantic.networks import EmailStr
-from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 router = APIRouter()
 

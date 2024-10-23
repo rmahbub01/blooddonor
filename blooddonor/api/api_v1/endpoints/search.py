@@ -1,15 +1,16 @@
 from typing import Any
 
+from fastapi import APIRouter, Depends
+from sqlalchemy import and_
+from sqlalchemy.ext.asyncio import AsyncSession as Session
+from sqlalchemy.future import select
+
 from blooddonor.api import deps
 from blooddonor.models.usermodel import DonorModel
 from blooddonor.schemas.user import (
     DonorFilterSchema,
     UserApi,
 )
-from fastapi import APIRouter, Depends
-from sqlalchemy import and_
-from sqlalchemy.ext.asyncio import AsyncSession as Session
-from sqlalchemy.future import select
 
 router = APIRouter()
 

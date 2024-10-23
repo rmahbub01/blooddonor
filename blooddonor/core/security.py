@@ -1,9 +1,10 @@
 import datetime
 from typing import Any
 
-from blooddonor.core.config import settings
 from jose import jwt
 from passlib.context import CryptContext
+
+from blooddonor.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

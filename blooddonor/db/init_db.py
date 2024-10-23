@@ -1,9 +1,10 @@
+from sqlalchemy.ext.asyncio import AsyncSession as Session
+
 from blooddonor.core.config import settings
 from blooddonor.crud.crud_utility import user
 from blooddonor.db.base import Base
 from blooddonor.db.session import engine
 from blooddonor.schemas.user import UserCreateBase
-from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
 # otherwise, SQL Alchemy might fail to initialize relationships properly
@@ -14,12 +15,14 @@ async def init_db(db: Session) -> None:
     # Tables should be created with Alembic migrations
     # But if you don't want to use migrations, create
     # the tables un-commenting the next line
-    # Base.metadata.create_all(bind=engine)
-
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    # uncomment blow two lines if using without alembic
+    # async with engine.begin() as conn:
+    #     await conn.run_sync(Base.metadata.drop_all)
+    # async with engine.begin() as conn:
+    #     await conn.run_sync(Base.metadata.create_all)
 
     users = await user.get_by_mobile(db, mobile=settings.FIRST_SUPERUSER_MOBILE)
     if not users:

@@ -2,6 +2,9 @@ import datetime
 import uuid
 from uuid import UUID
 
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from blooddonor.db.base_class import Base
 from blooddonor.schemas.user import (
     AcademicYearEnum,
@@ -11,8 +14,6 @@ from blooddonor.schemas.user import (
     EmploymentStatusEnum,
     GenderEnum,
 )
-from sqlalchemy import ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 class DonorModel(Base):

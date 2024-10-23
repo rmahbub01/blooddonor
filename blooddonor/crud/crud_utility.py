@@ -2,6 +2,10 @@ import datetime
 import uuid
 from typing import Any, override
 
+from pydantic import EmailStr
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession as Session
+
 from blooddonor.core import security
 from blooddonor.models.usermodel import DonorModel, ProfileModel
 from blooddonor.schemas.user import (
@@ -10,9 +14,6 @@ from blooddonor.schemas.user import (
     UserProfile,
     UserUpdateBase,
 )
-from pydantic import EmailStr
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from .base import CRUDBase
 

@@ -4,9 +4,10 @@ from pathlib import Path
 from typing import Any
 
 import emails
-from blooddonor.core.config import settings
 from emails.template import JinjaTemplate
 from jose import JWTError, jwt
+
+from blooddonor.core.config import settings
 
 
 async def send_email(
