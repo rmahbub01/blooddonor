@@ -45,7 +45,7 @@ class CRUDUser(CRUDBase[DonorModel, UserCreateBase, UserUpdateBase]):
 
         # Query for active users
         active_query = select(func.count(DonorModel.id)).where(
-            DonorModel.is_available == bool(True)
+            DonorModel.is_available == True  # noqa
         )
         active_result = await db.execute(active_query)
         active_count = active_result.scalar()

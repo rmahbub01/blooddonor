@@ -1,5 +1,6 @@
 import uuid
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import Row, RowMapping, asc, desc, select
@@ -45,7 +46,7 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
             select(self.model)
             .options(joinedload(self.model.profile))
             .order_by(order_expression)
-            .where(self.model.is_available == bool(True))
+            .where(self.model.is_available == True)  # noqa
             .offset(skip)
             .limit(limit)
         )

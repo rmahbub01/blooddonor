@@ -14,7 +14,7 @@ async def send_email(
     email_to: str,
     subject_template: str = "",
     html_template: str = "",
-    environment: dict[str, Any] = {},
+    environment: dict[str, Any] = {},  # noqa
 ) -> None:
     assert settings.EMAILS_ENABLED, "no provided configuration for email variables"
 

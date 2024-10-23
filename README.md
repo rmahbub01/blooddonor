@@ -21,26 +21,37 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
     git clone https://github.com/rmahbub01/blooddonor.git
     cd blooddonor
     ```
-
-2. Create and activate a virtual environment:
-
+2. Download [uv](https://docs.astral.sh/uv/getting-started/installation/) project manager tools
+    - macOS and Linux
     ```bash
-    python -m venv venv # Windows
-    source venv\Scripts\activate # Windows
-   
-    python3 -m venv venv # Linux and Mac
-    source venv/bin/activate  # Linux and Mac
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+   - Windows Powershell
+    ```powershell
+   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+   ```
+3. Create and activate a virtual environment using ```uv```:
+    - macOS, Linux and Windows 
+    ```bash
+    uv venv .venv
+    ```
+   - Activate virtual environment in macOs and Linux
     
     ```
-
-3. Install the dependencies:
+   source .venv/bin/activate
+   ```
+   - Activate virtual environment in Windows
+    
+    ```
+   .venv\Scripts\activate
+   ```
+4. Install the dependencies:
 
     ```bash
-    pip install -r requirements.txt # Windows
-    pip3 install -r requirements.txt # Linux and Mac
+    uv sync
     ```
 
-4. Rename ```.env.example``` file to ```.env```
+5. Rename ```.env.example``` file to ```.env```
    - Set the required variables
    - To see variable choices option, move to the bottom part of the documentation
    - Like, ```FIRST_SUPERUSER_DISTRICT=dhaka, FIRST_SUPERUSER_DISTRICT=munshiganj, FIRST_SUPERUSER_BLOOD_GROUP=ab+```
@@ -92,20 +103,33 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
  ```
 
 ## Quick Start
+1. Create [Alembic](https://alembic.sqlalchemy.org/en/latest/) revision and migration
+    - Run revision
+    ```
+   alembic revision --autogenerate -m "Initial migration"
+   ```
+   - Run migration
 
-00. Create First Super User
-    ```bash
-    python initial_data.py # Windows
-    python3 initial_data.py # Linux and Mac
+    ```
+   alembic upgrade head
+   ```
+2. Create First Super User
+    - macOS and Linux
+    ```
+    python3 initial_data.py
+    ```
+   - Windows
+   ```
+    python initial_data.py
     ```
 
-1. Run the FastAPI server:
+3. Run the FastAPI server:
 
-    ```bash
-    uvicorn main:app --reload
+    ```
+    uv run uvicorn main:app --reload
     ```
 
-2. Open your browser and visit:
+4. Open your browser and visit:
 
     - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
     - ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)

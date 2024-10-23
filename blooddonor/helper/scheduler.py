@@ -25,7 +25,7 @@ async def update_donor_availability(db: Session):
             update(DonorModel)
             .where(DonorModel.donated_on < three_months_ago)
             .where(
-                DonorModel.is_available == bool(False)
+                DonorModel.is_available is False
             )  # Only update if is_available is False
             .values(is_available=True)
         )

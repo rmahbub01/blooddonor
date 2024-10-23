@@ -380,8 +380,7 @@ async def upload_profile_img(
             status_code=status.WS_1011_INTERNAL_ERROR,
             detail="There is an error in the server. Pls try again.",
         )
-    finally:
-        return {"success": "Profile image upload successful."}
+    return {"success": "Profile image upload successful."}
 
 
 @router.patch("/change_availability", response_model=Msg)
