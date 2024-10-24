@@ -106,7 +106,7 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 1. Create [Alembic](https://alembic.sqlalchemy.org/en/latest/) revision and migration
     - Run revision
     ```
-   alembic revision --autogenerate -m "Initial migration"
+   alembic revision --autogenerate -m "Initial commit"
    ```
    - Run migration
 

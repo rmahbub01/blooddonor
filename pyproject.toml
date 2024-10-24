@@ -6,7 +6,7 @@ authors = [{name="Mahbub Rahman", email="creative.mahbubrahman@gmail.com"}]
 license = "MIT"
 keywords = ["blood donation", "university", "university of chittagong", "blood seekers", "blood donors", "community", "healthcare", "FastAPI"]
 readme = "README.md"
-requires-python = ">=3.12.3"
+requires-python = ">=3.12.3, <3.13"
 dependencies = [
     "SQLAlchemy>=2.0.33",
     "pillow>=10.4.0",
@@ -21,6 +21,7 @@ dependencies = [
     "emails>=0.6",
     "passlib[bcrypt]>=1.7.4",
     "alembic>=1.13.3",
+    "greenlet>=3.1.1",
 ]
 
 [tool.uv]
