@@ -380,7 +380,7 @@ async def upload_profile_img(
             status_code=status.WS_1011_INTERNAL_ERROR,
             detail="There is an error in the server. Pls try again.",
         )
-    return {"success": "Profile image upload successful."}
+    return Msg(msg="Profile image upload successful.")
 
 
 @router.patch("/change_availability", response_model=Msg)
@@ -401,7 +401,7 @@ async def change_availability(
     )
 
 
-@router.get("/get/profile_img/{user_id}", response_class=FileResponse)
+@router.get("/get_profile_img/{user_id}", response_class=FileResponse)
 async def get_profile_img(user_id: str) -> str:
     static_dir = "./blooddonor/static/images"
     img_path = f"{static_dir}/{user_id}.png"

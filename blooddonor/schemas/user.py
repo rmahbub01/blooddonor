@@ -280,7 +280,7 @@ class UpdateBySuperUser(UserBase, CommonFieldValidationMixin, PasswordValidation
 
 # update user password schema
 class UserChangePassword(BaseModel, PasswordValidationMixin):
-    token: str
+    token: str | None = None
     password: str
 
 

@@ -2,8 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession as Session
 
 from blooddonor.core.config import settings
 from blooddonor.crud.crud_utility import user
-from blooddonor.db.base import Base
-from blooddonor.db.session import engine
+from blooddonor.db.base import Base  # noqa
+from blooddonor.db.session import engine  # noqa
 from blooddonor.schemas.user import UserCreateBase
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
@@ -14,13 +14,8 @@ from blooddonor.schemas.user import UserCreateBase
 async def init_db(db: Session) -> None:
     # Tables should be created with Alembic migrations
     # But if you don't want to use migrations, create
-    # the tables un-commenting the next line
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # the tables un-commenting the next lines
 
-    # uncomment blow two lines if using without alembic
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.drop_all)
     # async with engine.begin() as conn:
     #     await conn.run_sync(Base.metadata.create_all)
 

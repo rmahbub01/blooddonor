@@ -123,7 +123,7 @@ async def change_password(
     hashed_password = await get_password_hash(new_password.password)
     current_user.hashed_password = hashed_password
     db.add(current_user)
-    await db.commit()  # noqa
+    await db.commit()
     return {"msg": "Password updated successfully"}
 
 

@@ -16,7 +16,7 @@ dependencies = [
     "uvicorn>=0.32.0",
     "fastapi[standard]>=0.115.3",
     "pydantic-settings>=2.6.0",
-    "python-jose==3.3.0",
+    "python-jose>=3.3.0",
     "aiosqlite>=0.20.0",
     "emails>=0.6",
     "passlib[bcrypt]>=1.7.4",
@@ -27,6 +27,7 @@ dependencies = [
 [tool.uv]
 dev-dependencies = [
     "mypy>=1.13.0",
+    "pytest-asyncio>=0.24.0",
     "pytest>=7.4.4",
     "ruff>=0.7.0",
 ]
@@ -39,6 +40,9 @@ exclude = ["venv", ".venv", "alembic"]
 [tool.ruff]
 target-version = "py310"
 exclude = ["alembic"]
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "module"
 
 [tool.ruff.lint]
 select = [

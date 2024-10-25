@@ -1,6 +1,6 @@
 # BLOOD DONOR Project using FastAPI
 
-This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-performance API development with Python. FastAPI is a modern, fast (high-performance), web framework for building APIs with ```Python 3.12+ ``` based on standard Python type hints. It uses the official fastapi cookiecutter.
+This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-performance API development with Python. FastAPI is a modern, fast (high-performance), web framework for building APIs with ```Python >=3.12.0, <3.13.0``` based on standard Python type hints. It uses the official fastapi cookiecutter.
 
 ## Table of Contents
 
@@ -21,12 +21,12 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
     git clone https://github.com/rmahbub01/blooddonor.git
     cd blooddonor
     ```
-2. Download [uv](https://docs.astral.sh/uv/getting-started/installation/) project manager tools
+2. Download [uv](https://docs.astral.sh/uv/getting-started/installation/) project manager tools. If already installed, don't need to reinstall.
     - macOS and Linux
     ```bash
     curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
-   - Windows Powershell
+   - Windows Powershell (you may need to restart your machine after installation)
     ```powershell
    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
    ```
@@ -104,7 +104,7 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 
 ## Quick Start
 1. Create [Alembic](https://alembic.sqlalchemy.org/en/latest/) revision and migration
-    - Run revision
+    - Run revision (optional, but you must run this command after changing db model fields)
     ```
    alembic revision --autogenerate -m "Initial commit"
    ```
@@ -137,6 +137,12 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 ## API Endpoints
 
 Refer to the [interactive API docs](http://127.0.0.1:8000/docs) for a full list of available endpoints.
+
+## API Testing using ```pytest```
+
+```
+uv run pytest --disable-warnings
+```
 
 
 ## List of Choices
