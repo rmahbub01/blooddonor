@@ -22,7 +22,7 @@ async def get_db() -> Session:
         async with SessionLocal() as session:
             yield session
     finally:
-        await session.close()
+        await session.aclose()
 
 
 async def get_current_user(

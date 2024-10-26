@@ -51,9 +51,8 @@ async def filter_donors(
         query = query.where(and_(*conditions))
 
     # Execute the query asynchronously
-    result = await db.execute(query)  # noqa
+    result = await db.execute(query)
 
     # Fetch all the matching rows
     users = result.scalars().all()
-
     return users

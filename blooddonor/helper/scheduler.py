@@ -41,4 +41,4 @@ async def update_donor_availability(db: Session):
         logger.error(f"Error updating donor availability: {str(e)}")
         raise
     finally:
-        await db.close()
+        await db.aclose()

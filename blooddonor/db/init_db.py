@@ -36,4 +36,4 @@ async def init_db(db: Session) -> None:
             is_admin=True,
         )
         await user.create(db, obj_in=user_in)
-    await db.close()  # noqa
+    await db.aclose()

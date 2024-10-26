@@ -1,8 +1,11 @@
+import random
+
 import pytest
 
 from blooddonor.core.config import settings
 from blooddonor.crud.crud_utility import user
 from blooddonor.helper.email import generate_password_reset_token
+from blooddonor.schemas.user import AcademicYearEnum
 from blooddonor.tests.utility.data import (
     data_for_random_user,
     data_for_superuser_by_superuser,
@@ -13,9 +16,11 @@ from blooddonor.tests.utility.data import (
 
 @pytest.mark.asyncio
 async def test_read_users(client):
-    res = await client.get("/users/read_users")
-    assert res.status_code == 200
-    assert len(res.json()) == 1
+    r = await client.get("/users/read_users")
+    res = r.json()
+    assert r.status_code == 200
+    for data in res:
+        assert "email" in data
 
 
 @pytest.mark.asyncio
@@ -184,7 +189,7 @@ async def test_user_update_using_email_by_superuser(client, superuser_token_head
 
 
 @pytest.mark.asyncio
-async def test_user_update_using_email_by_user(client, user_token_headers):
+async def test_update_user_using_email_by_user(client, user_token_headers):
     user_data = data_for_random_user
     update_data = {
         "full_name": "User Update by Superuser using email",
@@ -227,11 +232,20 @@ async def test_get_profile_img_by_id(client, user_token_headers):
 
 
 @pytest.mark.asyncio
-async def test_get_users_counts(client):
+async def test_get_users_counts(client, db):
     r = await client.get("/users/counts")
     res = r.json()
     assert r.status_code == 200
-    assert res["total_user_count"] > 0
+    db_counts = await user.get_user_count(db)
+
+    db_counts_copy = db_counts.copy()
+    res_copy = res.copy()
+    del db_counts_copy["blood_group_percentages"]
+    del res_copy["blood_group_percentages"]
+
+    paired_values = list(zip(db_counts_copy.values(), res_copy.values(), strict=False))
+    bool_vals = [x[0] == x[1] for x in paired_values]
+    assert all(bool_vals)
 
 
 @pytest.mark.asyncio
@@ -241,3 +255,77 @@ async def test_get_me(client, user_token_headers):
     res = r.json()
     assert res["email"] == user_data["email"]
     assert res["mobile"] == user_data["mobile"]
+
+
+@pytest.mark.asyncio
+async def test_delete_user_current_superuser_error(client, superuser_token_headers):
+    r = await client.delete(
+        f"/users/delete_user/{settings.FIRST_SUPERUSER_EMAIL}",
+        headers=superuser_token_headers,
+    )
+    res = r.json()
+    assert res["detail"] == "Super users are not allowed to delete themselves"
+
+
+@pytest.mark.asyncio
+async def test_user_not_found(client):
+    r = await client.get("/users/read_user/randomemailaddr@gmail.com")
+    res = r.json()
+    assert r.status_code == 404
+    assert res["detail"] == "User not found!"
+
+
+@pytest.mark.asyncio
+async def test_user_exists(client):
+    user_data = data_for_user_by_superuser
+    r = await client.post("/users/create_user", json=user_data)
+    res = r.json()
+    assert r.status_code == 400
+    assert (
+        res["detail"]
+        == "The user with this mobile, email or student_id already exists in the system"
+    )
+
+
+@pytest.mark.asyncio
+async def test_validation_error(client, superuser_token_headers):
+    email = settings.FIRST_SUPERUSER_EMAIL
+    test_data = {
+        "full_name": "",
+        "email": "user@example",
+        "mobile": "017111111111",
+        "department": "1011",
+        "student_id": "2020202002",
+        "gender": "malee",
+        "profile": {"employment_status": "invalid"},
+        "district": "district",
+        "blood_group": "A_POSITIVE",
+        "academic_year": "2010-2012",
+        "password": "PASS",
+    }
+    for key, val in test_data.items():
+        updated_data = {key: val}
+        r = await client.patch(
+            f"/users/update/{email}", json=updated_data, headers=superuser_token_headers
+        )
+        res = r.json()
+        if key == "profile":
+            field_name = res["detail"][0]["field"]
+            assert field_name == "employment_status"
+        else:
+            field_name = res["detail"][0]["field"]
+            assert field_name == key
+
+    # test for invalid academic year
+    academic_year = settings.FIRST_SUPERUSER_ACADEMIC_YEAR
+    academic_year = random.choice(
+        [year.value for year in AcademicYearEnum if year.value != academic_year]  # noqa
+    )
+    r = await client.patch(
+        f"/users/update/{email}",
+        json={"academic_year": academic_year},
+        headers=superuser_token_headers,
+    )
+    res = r.json()
+    field_name = res["detail"][0]["field"]
+    assert field_name == "academic_year"

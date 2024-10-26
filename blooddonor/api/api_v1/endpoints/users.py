@@ -59,12 +59,15 @@ async def read_users(
     return users
 
 
-@router.post("/create_user_by_superuser", response_model=UserApi)
+@router.post(
+    "/create_user_by_superuser",
+    response_model=UserApi,
+    dependencies=[Depends(deps.get_current_active_superuser)],
+)
 async def create_user_by_superuser(
     *,
     db: Session = Depends(deps.get_db),
     user_in: UserCreateBase,
-    current_user: DonorModel = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Create new user (Need Super User privilege).
@@ -92,6 +95,11 @@ async def delete_user(
 ):
     """Delete a user/donor by email (Need Super User privilege)"""
     donor = await user.get_by_email(db, email=email)
+    if donor == current_user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Super users are not allowed to delete themselves",
+        )
     if donor:
         await user.remove(db, id=donor.id)
         return Msg(msg="The user has been removed!")
@@ -341,13 +349,16 @@ async def read_user_by_email(
         )
 
 
-@router.patch("/update/{user_email}", response_model=UserApi)
+@router.patch(
+    "/update/{user_email}",
+    response_model=UserApi,
+    dependencies=[Depends(deps.get_current_active_superuser)],
+)
 async def update_user_by_email(
     *,
     db: Session = Depends(deps.get_db),
     user_email: EmailStr,
     user_in: UpdateBySuperUser,
-    current_user: DonorModel = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Update a user (Super User Privilege needed).

@@ -139,10 +139,22 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 Refer to the [interactive API docs](http://127.0.0.1:8000/docs) for a full list of available endpoints.
 
 ## API Testing using ```pytest```
+- Just run pytest
 
 ```
 uv run pytest --disable-warnings
 ```
+
+- pytest with code coverage
+    - Run this command for testing
+        ```
+        uv run coverage run -m pytest --disable-warnings
+        ```
+    - Generate html report of the coverage
+        ```
+        uv run coverage html
+        ```
+
 
 
 ## List of Choices
