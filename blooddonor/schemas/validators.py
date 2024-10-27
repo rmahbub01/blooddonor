@@ -33,7 +33,7 @@ class CommonFieldValidationMixin:
         v = str(v)
         department = info.data.get("department")
         student_id_regex = r"[1-9]{1}[\d]{1}[1-9]{1}[\d]{5}"
-        if v and (
+        if (v and department) and (
             (len(v) == 8)
             and re.match(student_id_regex, v)
             and (str(department.value) == v[2:5])
@@ -49,7 +49,11 @@ class CommonFieldValidationMixin:
         from blooddonor.schemas.user import AcademicYearEnum
 
         student_id = info.data.get("student_id")
-        if v in AcademicYearEnum and student_id and student_id[:2] == v[-2:]:
+        if (
+            (v and student_id)
+            and (v in AcademicYearEnum)
+            and (student_id[:2] == str(v)[-2:])
+        ):
             return v
         raise ValueError("Your session is not valid.")
 

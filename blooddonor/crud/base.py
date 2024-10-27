@@ -75,7 +75,12 @@ class CRUDBase[ModelType, CreateSchemaType, UpdateSchemaType]:
             update_data = obj_in.model_dump(exclude_unset=True)
         for field in obj_data:
             if field in update_data:
-                setattr(db_obj, field, update_data[field])
+                if hasattr(db_obj, field) and isinstance(update_data[field], dict):
+                    profile_obj = getattr(db_obj, field)
+                    for pk, pv in update_data[field].items():
+                        setattr(profile_obj, pk, pv)
+                else:
+                    setattr(db_obj, field, update_data[field])
         db.add(db_obj)
         await db.commit()
         await db.refresh(db_obj)

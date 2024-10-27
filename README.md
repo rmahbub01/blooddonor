@@ -96,6 +96,9 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
    EMAILS_ENABLED=False
    EMAILS_FROM_EMAIL=<organization email>
    EMAILS_FROM_NAME=BloodDonor
+   # The scheduler will run every given hours to check donor last donation date
+   # if greater than 3 month it will make the donor available
+   SCHEDULER_RERUN_TIME_IN_HOURS=3
    
    # Automatics Documentations UI. Set None to disable
    #DOCS_URL=None

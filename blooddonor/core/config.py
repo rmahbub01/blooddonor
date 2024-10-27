@@ -85,6 +85,9 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_ACADEMIC_YEAR: str
     USERS_OPEN_REGISTRATION: bool = True
 
+    # Scheduler rerun time in hours
+    SCHEDULER_RERUN_TIME_IN_HOURS: float = 3
+
     # Automatics Documentations UI
     DOCS_URL: str | None = "/docs"
     REDOC_URL: str | None = "/redoc"

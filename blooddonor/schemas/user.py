@@ -232,7 +232,7 @@ class UserBase(BaseModel, CommonFieldValidationMixin):
     academic_year: AcademicYearEnum
     is_available: bool = True
     # profile
-    profile: ProfileResponse | None = None
+    profile: UserProfile | None = None
     # permission fields
     is_active: bool = True
     is_admin: bool = False
@@ -299,6 +299,9 @@ class UserInDB(UserInDBBase):
 
 
 class UserProfile(BaseModel):
+    id: uuid.UUID | None = None
+    donor_id: uuid.UUID | None = None
+
     profile_img: str | None = None
     facebook: str | None = None
     instagram: str | None = None
@@ -316,8 +319,6 @@ class UserProfile(BaseModel):
 
 
 class ProfileResponse(UserProfile):
-    id: uuid.UUID | None = None
-    donor_id: uuid.UUID | None = None
     model_config = ConfigDict(from_attributes=True)
 
 

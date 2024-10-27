@@ -7,7 +7,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import ValidationError
 
 from blooddonor.api.api_v1.api import api_router
 from blooddonor.core.config import settings
@@ -25,7 +24,9 @@ def scheduled_tasks():
     asyncio.run(update_donor_availability(db))
 
 
-scheduler.add_job(scheduled_tasks, trigger="interval", hours=3)
+scheduler.add_job(
+    scheduled_tasks, trigger="interval", hours=settings.SCHEDULER_RERUN_TIME_IN_HOURS
+)
 
 
 @asynccontextmanager
@@ -66,30 +67,13 @@ async def validation_exception_handler_fastapi(
     )
 
 
-@app.exception_handler(ValidationError)
-async def validation_exception_handler_pydantic(request: Request, exc: ValidationError):  # noqa
-    errors = exc.errors()
-    formatted_errors = []
-    for error in errors:
-        formatted_errors.append(
-            {
-                "field": error["loc"][-1],
-                "message": error.get("msg"),
-            }
-        )
-
-    return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content={"detail": formatted_errors},
-    )
-
-
 app.mount("/static", StaticFiles(directory="./blooddonor/static"), name="static")
-# Set all CORS enabled origins
+
+
 # Set all CORS enabled origins
 if settings.all_cors_origins:
     app.add_middleware(
-        CORSMiddleware,
+        CORSMiddleware,  # noqa
         allow_origins=settings.all_cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
