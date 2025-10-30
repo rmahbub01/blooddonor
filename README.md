@@ -107,17 +107,20 @@ This is a [FastAPI](https://fastapi.tiangolo.com/) application built for high-pe
 
 ## Quick Start
 1. Create [Alembic](https://alembic.sqlalchemy.org/en/latest/) revision and migration
-    - Run revision (optional, but you must run this command after changing db model fields)
-    ```
-   alembic revision --autogenerate -m "Initial commit"
-   ```
-   - Run migration
+    - Run migration
 
     ```
-   alembic upgrade head
-   ```
+    alembic upgrade head
+    ```
+    
+    - Run revision (OPTIONAL IF YOU DON'T CHANGE ANY DB FIELDS) and YOU MUST MUST run this command AFTER WHEN YOU CHANGE db model fields NOT BEFORE
+    
+    ```
+    alembic revision --autogenerate -m "Initial commit"
+    ```
+   
 2. Create First Super User
-    - macOS and Linux
+   - macOS and Linux
     ```
     python3 initial_data.py
     ```
