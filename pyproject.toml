@@ -6,7 +6,9 @@ authors = [{name="Mahbub Rahman", email="creative.mahbubrahman@gmail.com"}]
 license = "MIT"
 keywords = ["blood donation", "university", "university of chittagong", "blood seekers", "blood donors", "community", "healthcare", "FastAPI"]
 readme = "README.md"
-requires-python = ">=3.12.3, <3.13"
+
+
+requires-python = ">=3.13"
 dependencies = [
     "SQLAlchemy>=2.0.33",
     "pillow>=10.4.0",
@@ -24,8 +26,8 @@ dependencies = [
     "greenlet>=3.1.1",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "coverage>=7.6.4",
     "mypy>=1.13.0",
     "pytest-asyncio>=0.24.0",
