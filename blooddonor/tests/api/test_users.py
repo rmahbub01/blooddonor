@@ -164,7 +164,7 @@ async def test_update_profile_me(client, user_token_headers):
 @pytest.mark.asyncio
 async def test_read_user_by_email(client):
     user_data = data_for_random_user
-    r = await client.get(f"/users/read_user/{user_data["email"]}")
+    r = await client.get(f"/users/read_user/{user_data['email']}")
     res = r.json()
     assert res["email"] == user_data["email"]
     assert res["mobile"] == user_data["mobile"]
@@ -178,7 +178,7 @@ async def test_user_update_using_email_by_superuser(client, superuser_token_head
         "is_available": False,
     }
     r = await client.patch(
-        f"/users/update/{user_data["email"]}",
+        f"/users/update/{user_data['email']}",
         json=update_data,
         headers=superuser_token_headers,
     )
@@ -196,7 +196,7 @@ async def test_update_user_using_email_by_user(client, user_token_headers):
         "is_available": False,
     }
     r = await client.patch(
-        f"/users/update/{user_data["email"]}",
+        f"/users/update/{user_data['email']}",
         json=update_data,
         headers=user_token_headers,
     )

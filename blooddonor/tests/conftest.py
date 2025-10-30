@@ -1,7 +1,7 @@
 from io import BytesIO
 
 import pytest_asyncio
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from PIL import Image
 
 from blooddonor.api.deps import get_db
@@ -35,7 +35,9 @@ async def client(db):  # noqa
 
     app.dependency_overrides[get_db] = override_get_db
 
-    async with AsyncClient(app=app, base_url=TEST_URL) as test_client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url=TEST_URL
+    ) as test_client:
         yield test_client
 
     app.dependency_overrides.clear()

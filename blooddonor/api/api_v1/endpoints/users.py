@@ -408,7 +408,7 @@ async def change_availability(
     user_in = jsonable_encoder(current_user)
     await user.update(db, db_obj=current_user, obj_in=UserUpdateBase(**user_in))
     return Msg(
-        msg=f"Availability status has been changed. Now {"available" if current_user.is_available else "unavailable"}"
+        msg=f"Availability status has been changed. Now {'available' if current_user.is_available else 'unavailable'}"
     )
 
 
